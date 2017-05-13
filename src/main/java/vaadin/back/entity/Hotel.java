@@ -46,7 +46,7 @@ public class Hotel extends AbstractEntity {
 	@Size(min = 1, max = 256, message = "URL must be longer than 1 and less than 256 characters")
 	private String url;
 
-	@Size(min = 1, max = 256, message = "Description must be longer than 1 and less than 256 characters")
+	@Size(min = 1, max = 65535, message = "Description must be longer than 1 and less than 65535 characters")
 	private String description;
 
 

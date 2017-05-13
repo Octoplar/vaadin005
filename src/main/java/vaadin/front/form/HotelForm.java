@@ -85,7 +85,7 @@ public class HotelForm extends FormLayout {
         category.setDescription("Category from drop list");
         operatesFrom.setDescription("Date from Dec 02 BDT 292269055 to now exclusive");
         url.setDescription("Any string up to 255");
-        description.setDescription("Any string up to 255");
+        description.setDescription("Any string up to 65535");
     }
 
     public Hotel getHotel() {
@@ -173,7 +173,7 @@ public class HotelForm extends FormLayout {
                 .bind(Hotel::getAddress, Hotel::setAddress);
 
         hotelBinder.forField(description)
-                .withValidator(s->(s!=null&&s.length()<=255), "Maximum description length is 255")
+                .withValidator(s->(s!=null&&s.length()<=65535), "Maximum description length is 65535")
                 .bind(Hotel::getDescription, Hotel::setDescription);
 
         hotelBinder.forField(url)
