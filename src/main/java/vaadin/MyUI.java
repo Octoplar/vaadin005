@@ -27,7 +27,7 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 import java.util.*;
 
-import static vaadin.back.util.HotelUtils.iterableToList;
+import static vaadin.util.HotelUtils.iterableToList;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -127,6 +127,8 @@ public class MyUI extends UI {
         hotelBulkForm=new HotelBulkForm(hotelService, hotelCategoryService, this);
         hotelBulkForm.setVisible(true);
         bulkPopup=new PopupView("Bulk form", hotelBulkForm);
+        //todo
+        bulkPopup.setSizeFull();
 
         contentMap=new IdentityHashMap<>();
         contentMap.put(menuItemHotel, hotelEditorContent);
@@ -148,6 +150,8 @@ public class MyUI extends UI {
 
     //refresh grid content
     public void refreshHotelGridContent(){
+        hotelGrid.asMultiSelect().clear();
+
         //eager load items in grid
         //hotelGrid.setItems(iterableToList(hotelService.findAll()));
 
@@ -164,6 +168,7 @@ public class MyUI extends UI {
         addressFilter.clear();
     }
     public void refreshHotelCategoryGridContent(){
+        hotelGrid.asMultiSelect().clear();
         hotelCategoryGrid.setItems(iterableToList(hotelCategoryService.findAll()));
         //hide form
         hotelCategoryForm.setVisible(false);

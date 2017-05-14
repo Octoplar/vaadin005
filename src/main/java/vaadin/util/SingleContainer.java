@@ -1,4 +1,4 @@
-package vaadin.back.util;
+package vaadin.util;
 
 /**
  * Created by Octoplar on 14.05.2017.

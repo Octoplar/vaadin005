@@ -1,4 +1,4 @@
-package vaadin.back.util;
+package vaadin.util;
 
 import com.vaadin.data.ValidationResult;
 

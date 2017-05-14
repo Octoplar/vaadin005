@@ -11,15 +11,15 @@ import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
-import vaadin.back.util.SingleContainer;
+import vaadin.util.SingleContainer;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
 
 import javax.persistence.OptimisticLockException;
 import java.util.*;
 
-import static vaadin.back.util.HotelUtils.validationErrorsListToString;
-import static vaadin.back.util.HotelUtils.iterableToList;
+import static vaadin.util.HotelUtils.validationErrorsListToString;
+import static vaadin.util.HotelUtils.iterableToList;
 
 /**
  * Created by Octoplar on 14.05.2017.
@@ -54,7 +54,6 @@ public class HotelBulkForm extends FormLayout {
     private static String OPERATES_FROM="Operates from";
     private static String DESCRIPTION="Description";
     private static String CATEGORY="Category";
-    private static String NONE="";
 
 
 
@@ -79,7 +78,6 @@ public class HotelBulkForm extends FormLayout {
         //mapping
         contentMap=new HashMap<>();
         contentMap.put(null, new NonSelectedState());
-        contentMap.put(NONE, new NonSelectedState());
         contentMap.put(NAME, new UpdateNameFieldState());
         contentMap.put(ADDRESS, new UpdateAddressFieldState());
         contentMap.put(RATING, new UpdateRatingFieldState());
@@ -90,11 +88,13 @@ public class HotelBulkForm extends FormLayout {
 
         //native select
         fieldSelector=new NativeSelect<>();
-        fieldSelector.setItems(Arrays.asList(NONE, NAME, ADDRESS, RATING, URL, OPERATES_FROM, DESCRIPTION, CATEGORY));
-        fieldSelector.setSelectedItem(NONE);
+        fieldSelector.setItems(Arrays.asList(NAME, ADDRESS, RATING, URL, OPERATES_FROM, DESCRIPTION, CATEGORY));
+        fieldSelector.setSelectedItem(null);
         fieldSelector.addValueChangeListener(e->fieldSelectorOnValueChange());
         //current state
-        currentState=contentMap.get(fieldSelector.getSelectedItem());
+
+        Optional o=fieldSelector.getSelectedItem();
+        currentState=contentMap.get(o.isPresent()?o.get():null);
         //set content
     }
 
@@ -109,8 +109,9 @@ public class HotelBulkForm extends FormLayout {
             throw new RuntimeException(e);
         }
 
-        fieldSelector.setSelectedItem(NONE);
-        currentState=contentMap.get(fieldSelector.getSelectedItem());
+        fieldSelector.setSelectedItem(null);
+        Optional o=fieldSelector.getSelectedItem();
+        currentState=contentMap.get(o.isPresent()?o.get():null);
         repaint();
     }
 
@@ -128,13 +129,17 @@ public class HotelBulkForm extends FormLayout {
     }
     private void fieldSelectorOnValueChange(){
         //switch state
-        currentState=contentMap.get(fieldSelector.getSelectedItem());
+
+        Optional o=fieldSelector.getSelectedItem();
+        currentState=contentMap.get(o.isPresent()?o.get():null);
         repaint();
     }
 
     private void onUpdateClick(){
         currentState.onUpdateClick();
         currentState.refreshContent();
+        ui.hidePopup();
+        ui.refreshHotelGridContent();
     }
     private void onCancelClick(){
         ui.hidePopup();
@@ -180,7 +185,8 @@ public class HotelBulkForm extends FormLayout {
                     .withValidator(new HotelNamePredicate(), HotelNamePredicate.MESSAGE)
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue("");
+            binder.setBean(this.entry);
         }
 
         @Override
@@ -191,7 +197,7 @@ public class HotelBulkForm extends FormLayout {
         @Override
         public void refreshContent() {
             updateButton.setVisible(true);
-            entry.setValue("");
+            entry.setValue(" ");
             binder.setBean(this.entry);
         }
 
@@ -250,7 +256,8 @@ public class HotelBulkForm extends FormLayout {
                     .withValidator(new HotelAddressPredicate(), HotelAddressPredicate.MESSAGE)
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue("");
+            binder.setBean(this.entry);
         }
 
         @Override
@@ -323,7 +330,8 @@ public class HotelBulkForm extends FormLayout {
                     .withValidator(new HotelUrlPredicate(), HotelUrlPredicate.MESSAGE)
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue("");
+            binder.setBean(this.entry);
         }
 
         @Override
@@ -395,7 +403,8 @@ public class HotelBulkForm extends FormLayout {
                     .withValidator(new HotelDescriptionPredicate(), HotelDescriptionPredicate.MESSAGE)
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue("");
+            binder.setBean(this.entry);
         }
 
         @Override
@@ -467,7 +476,8 @@ public class HotelBulkForm extends FormLayout {
                     .withConverter(new LocalDateToLongDaysConverter())
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue(1L);
+            binder.setBean(this.entry);
         }
 
         @Override
@@ -540,7 +550,8 @@ public class HotelBulkForm extends FormLayout {
                     .withValidator(new HotelRatingPredicate(), HotelRatingPredicate.MESSAGE)
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue(1);
+            binder.setBean(this.entry);
         }
 
         @Override
@@ -600,6 +611,8 @@ public class HotelBulkForm extends FormLayout {
 
             field=new ComboBox<>("Category");
             field.setDescription("Category from drop list");
+            field.setItemCaptionGenerator(
+                    (ItemCaptionGenerator<HotelCategory>) (c) -> c==null||c.getName()==null?"":c.getName());
 
             layout=new VerticalLayout(field);
 
@@ -610,7 +623,9 @@ public class HotelBulkForm extends FormLayout {
                     .asRequired("Category is required")
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
-            refreshContent();
+            entry.setValue(new HotelCategory(""));
+            binder.setBean(this.entry);
+            refreshCategories();
         }
 
         @Override

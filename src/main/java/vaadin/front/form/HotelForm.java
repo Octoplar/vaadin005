@@ -16,8 +16,8 @@ import vaadin.front.validator.*;
 
 import javax.persistence.OptimisticLockException;
 
-import static vaadin.back.util.HotelUtils.iterableToList;
-import static vaadin.back.util.HotelUtils.validationErrorsListToString;
+import static vaadin.util.HotelUtils.iterableToList;
+import static vaadin.util.HotelUtils.validationErrorsListToString;
 
 
 /**

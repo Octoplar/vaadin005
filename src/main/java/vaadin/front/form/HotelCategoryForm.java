@@ -11,7 +11,7 @@ import vaadin.back.service.HotelCategoryService;
 
 import javax.persistence.OptimisticLockException;
 
-import static vaadin.back.util.HotelUtils.validationErrorsListToString;
+import static vaadin.util.HotelUtils.validationErrorsListToString;
 
 /**
  * Created by Octoplar on 07.05.2017.
