@@ -2,7 +2,6 @@ package vaadin.front.form;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.ValidationResult;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -11,7 +10,8 @@ import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 
 import javax.persistence.OptimisticLockException;
-import java.util.List;
+
+import static vaadin.back.util.HotelUtils.validationErrorsListToString;
 
 /**
  * Created by Octoplar on 07.05.2017.
@@ -101,7 +101,7 @@ public class HotelCategoryForm extends FormLayout {
         BinderValidationStatus<HotelCategory> validationStatus = hotelCategoryBinder.validate();
 
         if (validationStatus.hasErrors()) {
-            Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+            Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
             return;
         }
 
@@ -129,16 +129,6 @@ public class HotelCategoryForm extends FormLayout {
         ui.refreshHotelCategoryGridContent();
         //hide
         setVisible(false);
-    }
-
-    //readable errors notification
-    private String ValidationErrorsListToString(List<ValidationResult> results){
-        StringBuilder sb=new StringBuilder();
-        for (ValidationResult result : results) {
-            sb.append(result.getErrorMessage());
-            sb.append("\r\n");
-        }
-        return sb.toString();
     }
 
 

@@ -19,12 +19,15 @@ import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
+import vaadin.front.form.HotelBulkForm;
 import vaadin.front.form.HotelCategoryForm;
 import vaadin.front.form.HotelForm;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 import java.util.*;
+
+import static vaadin.back.util.HotelUtils.iterableToList;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -54,6 +57,9 @@ public class MyUI extends UI {
 
 
     //===================components====================================================================================
+    //popup
+    private PopupView bulkPopup;
+    private HotelBulkForm hotelBulkForm;
 
     //===========================menu=========================================
     private MenuBar menuBar=new MenuBar();
@@ -98,6 +104,7 @@ public class MyUI extends UI {
     private TextField addressFilter=new TextField();
     private Button clearAddressFilterButton = new Button(FontAwesome.TIMES);
     private Button createNewHotelButton = new Button();
+    private Button bulkPopupButton = new Button();
 
     //menuItem 2 components===============================================
     private Grid<HotelCategory> hotelCategoryGrid;
@@ -116,6 +123,10 @@ public class MyUI extends UI {
         hotelEditorContent=new VerticalLayout(configureToolbarLayout(),configureHotelGridAndFormLayout());
         hotelCategoryEditorContent=new VerticalLayout(configureHotelCategoryPageLayout());
         menuLayout=configureMenuBarLayout();
+
+        hotelBulkForm=new HotelBulkForm(hotelService, hotelCategoryService, this);
+        hotelBulkForm.setVisible(true);
+        bulkPopup=new PopupView("Bulk form", hotelBulkForm);
 
         contentMap=new IdentityHashMap<>();
         contentMap.put(menuItemHotel, hotelEditorContent);
@@ -157,6 +168,9 @@ public class MyUI extends UI {
         //hide form
         hotelCategoryForm.setVisible(false);
     }
+    public void hidePopup(){
+        bulkPopup.setPopupVisible(false);
+    }
 
 
 
@@ -194,6 +208,10 @@ public class MyUI extends UI {
         createNewHotelButton.setCaption("Add new hotel");
         createNewHotelButton.addClickListener(e-> createNewHotelButtonClick());
 
+        bulkPopupButton.setCaption("Manage all selected");
+        bulkPopupButton.addClickListener(e-> bulkPopupButtonClick());
+        bulkPopupButton.setVisible(false);
+
         return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton);
     }
 
@@ -222,8 +240,8 @@ public class MyUI extends UI {
         HorizontalLayout gridAndFormLayout=new HorizontalLayout(hotelGrid, hotelForm);
 
         //selection
-        hotelGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        hotelGrid.asSingleSelect().addValueChangeListener(this::hotelGridOnValueChange);
+        hotelGrid.setSelectionMode(Grid.SelectionMode.MULTI);
+        hotelGrid.asMultiSelect().addValueChangeListener(this::hotelGridOnValueChange);
 
         //resize components
         hotelForm.setSizeUndefined();
@@ -285,14 +303,34 @@ public class MyUI extends UI {
 
 
     // hotel grid value change listener
-    private void hotelGridOnValueChange(HasValue.ValueChangeEvent<Hotel> e){
-        Hotel h=e.getValue();
-        if(h==null)
-            hotelForm.setVisible(false);
-        else{
-            hotelForm.setHotel(h);
-            hotelForm.setVisible(true);
+    private void hotelGridOnValueChange(HasValue.ValueChangeEvent<Set<Hotel>> e){
+        List<Hotel> values=new ArrayList<Hotel>(e.getValue());
+        //0 case
+        if (values.size()==0){
+            bulkPopupButton.setVisible(false);
+            return;
         }
+        //1 case
+        if (values.size()==1){
+            bulkPopupButton.setVisible(false);
+            Hotel h=values.get(0);
+            if(h==null)
+                hotelForm.setVisible(false);
+            else{
+                hotelForm.setHotel(h);
+                hotelForm.setVisible(true);
+            }
+        }
+        //multi case
+        else {
+            hotelForm.setVisible(false);
+            bulkPopupButton.setVisible(true);
+        }
+
+
+
+
+
     }
 
     //hotel category grid value change listener
@@ -344,12 +382,18 @@ public class MyUI extends UI {
 
     private void createNewHotelButtonClick(){
         //clear selection
-        hotelGrid.asSingleSelect().clear();
+        hotelGrid.asMultiSelect().clear();
         //new instance for manage
         hotelForm.setHotel(new Hotel("", "", 1, 1L, null, "", ""));
 
         hotelForm.setVisible(true);
     }
+
+    private void bulkPopupButtonClick(){
+        hotelBulkForm.setManagedItems(hotelGrid.asMultiSelect().getSelectedItems());
+        bulkPopup.setPopupVisible(true);
+    }
+
 
     private void createNewHotelCategoryButtonClick(){
         //clear selection
@@ -388,19 +432,13 @@ public class MyUI extends UI {
     private void repaint(){
         VerticalLayout layout = new VerticalLayout();
 
-        layout.addComponents(menuLayout, currentContent);
+        layout.addComponents(menuLayout, currentContent, bulkPopup);
 
         setContent(layout);
     }
 
     //need for service compatibility
-    private <T> List<T> iterableToList(Iterable<T> iterable){
-        if (iterable instanceof List)
-            return (List<T>)iterable;
-        List<T> result= new ArrayList<T>();
-        iterable.forEach(result::add);
-        return result;
-    }
+
     //===================lazy===============================================================
     private void lazyListEntriesAll() {
         hotelGrid.setDataProvider(

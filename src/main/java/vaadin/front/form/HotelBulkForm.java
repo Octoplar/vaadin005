@@ -8,6 +8,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import vaadin.MyUI;
 import vaadin.back.entity.Hotel;
+import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
 import vaadin.back.util.SingleContainer;
@@ -15,12 +16,10 @@ import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
 
 import javax.persistence.OptimisticLockException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static vaadin.back.util.HotelUtils.ValidationErrorsListToString;
+import static vaadin.back.util.HotelUtils.validationErrorsListToString;
+import static vaadin.back.util.HotelUtils.iterableToList;
 
 /**
  * Created by Octoplar on 14.05.2017.
@@ -45,7 +44,18 @@ public class HotelBulkForm extends FormLayout {
     private UpdateFieldState currentState;
 
     //state mapping
-    private Map<String, UpdateFieldState> content;
+    private Map<String, UpdateFieldState> contentMap;
+
+    //field names
+    private static String NAME="Name";
+    private static String ADDRESS="Address";
+    private static String RATING="Rating";
+    private static String URL="Url";
+    private static String OPERATES_FROM="Operates from";
+    private static String DESCRIPTION="Description";
+    private static String CATEGORY="Category";
+    private static String NONE="";
+
 
 
 
@@ -55,19 +65,36 @@ public class HotelBulkForm extends FormLayout {
         this.hotelCategoryService = hotelCategoryService;
         this.ui = ui;
 
+        //size/visibility
+        this.setSizeUndefined();
+        this.setVisible(true);
+
         //buttons config
         updateButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
         updateButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        updateButton.addClickListener(e->currentState.onUpdateClick());
+        updateButton.addClickListener(e->onUpdateClick());
         cancelButton.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
-        cancelButton.addClickListener(e->currentState.onCancelClick());
+        cancelButton.addClickListener(e->onCancelClick());
 
-        // TODO: 14.05.2017
+        //mapping
+        contentMap=new HashMap<>();
+        contentMap.put(null, new NonSelectedState());
+        contentMap.put(NONE, new NonSelectedState());
+        contentMap.put(NAME, new UpdateNameFieldState());
+        contentMap.put(ADDRESS, new UpdateAddressFieldState());
+        contentMap.put(RATING, new UpdateRatingFieldState());
+        contentMap.put(URL, new UpdateUrlFieldState());
+        contentMap.put(OPERATES_FROM, new UpdateOperatesFromFieldState());
+        contentMap.put(DESCRIPTION, new UpdateDescriptionFieldState());
+        contentMap.put(CATEGORY, new UpdateCategoryFieldState());
+
         //native select
+        fieldSelector.setItems(Arrays.asList(NONE, NAME, ADDRESS, RATING, URL, OPERATES_FROM, DESCRIPTION, CATEGORY));
+        fieldSelector.setSelectedItem(NONE);
+        fieldSelector.addValueChangeListener(e->fieldSelectorOnValueChange());
         //current state
-        //
+        currentState=contentMap.get(fieldSelector.getSelectedItem());
         //set content
-
     }
 
     public void setManagedItems(Set<Hotel> items){
@@ -80,21 +107,42 @@ public class HotelBulkForm extends FormLayout {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
-        //todo
-        //visibility
-        //reset nativeSelect
-        //show empty content
+
+        fieldSelector.setSelectedItem(NONE);
+
+
+        fieldSelector.setSelectedItem(null);
+        repaint();
+    }
+
+    //============================================privates=============================================================
+
+
+    private void repaint(){
+        //reset new content
+        currentState.refreshContent();
+
+        //reassemble
+        this.removeAllComponents();
+        this.addComponents(fieldSelector, currentState.getContent(), buttons);
+
+    }
+    private void fieldSelectorOnValueChange(){
+        //switch state
+        currentState=contentMap.get(fieldSelector.getSelectedItem());
+        repaint();
+    }
+
+    private void onUpdateClick(){
+        currentState.onUpdateClick();
+        currentState.refreshContent();
+    }
+    private void onCancelClick(){
+        ui.hidePopup();
     }
 
 
 
-
-
-
-
-    private void hideForm(){
-        //todo
-    }
     //=============================================class members=======================================================
 
     private interface UpdateFieldState{
@@ -143,6 +191,7 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
+            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -153,7 +202,7 @@ public class HotelBulkForm extends FormLayout {
             BinderValidationStatus<SingleContainer<String>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
             String newValue=entry.getValue();
@@ -169,16 +218,10 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
         }
     }
 
@@ -218,6 +261,7 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
+            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -228,7 +272,7 @@ public class HotelBulkForm extends FormLayout {
             BinderValidationStatus<SingleContainer<String>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
             String newValue=entry.getValue();
@@ -244,16 +288,11 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
+
         }
     }
 
@@ -295,6 +334,7 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
+            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -305,7 +345,7 @@ public class HotelBulkForm extends FormLayout {
             BinderValidationStatus<SingleContainer<String>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
             String newValue=entry.getValue();
@@ -321,16 +361,10 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
         }
     }
 
@@ -372,6 +406,7 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
+            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -382,7 +417,7 @@ public class HotelBulkForm extends FormLayout {
             BinderValidationStatus<SingleContainer<String>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
             String newValue=entry.getValue();
@@ -398,16 +433,10 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
         }
     }
 
@@ -449,6 +478,7 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
+            updateButton.setVisible(true);
             entry.setValue(1L);
             binder.setBean(this.entry);
         }
@@ -459,7 +489,7 @@ public class HotelBulkForm extends FormLayout {
             BinderValidationStatus<SingleContainer<Long>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
             Long newValue=entry.getValue();
@@ -475,16 +505,10 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
         }
     }
 
@@ -527,6 +551,7 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
+            updateButton.setVisible(true);
             entry.setValue(1);
             binder.setBean(this.entry);
         }
@@ -537,7 +562,7 @@ public class HotelBulkForm extends FormLayout {
             BinderValidationStatus<SingleContainer<Integer>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
             Integer newValue=entry.getValue();
@@ -553,45 +578,37 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
         }
     }
 
     private class UpdateCategoryFieldState implements UpdateFieldState{
 
         //binder
-        Binder<SingleContainer<String>> binder;
+        Binder<SingleContainer<HotelCategory>> binder;
 
         //entry
-        SingleContainer<String> entry;
+        SingleContainer<HotelCategory> entry;
 
         //components
         Layout layout;
-        TextField field;
+        private ComboBox<HotelCategory> field;
 
         public UpdateCategoryFieldState() {
 
-            field=new TextField("Name");
-            field.setPlaceholder("Enter new name here");
-            field.setDescription("Any string up to 255");
+            field=new ComboBox<>("Category");
+            field.setDescription("Category from drop list");
 
             layout=new VerticalLayout(field);
 
-            entry=new SingleContainer<>("");
+            entry=new SingleContainer<>(new HotelCategory(""));
 
             binder=new Binder<>();
             binder.forField(field)
-                    .asRequired("Name is required")
-                    .withValidator(new HotelNamePredicate(), HotelNamePredicate.MESSAGE)
+                    .asRequired("Category is required")
                     .bind(SingleContainer::getValue, SingleContainer::setValue);
 
             refreshContent();
@@ -604,24 +621,26 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            entry.setValue("");
+            updateButton.setVisible(true);
+            entry.setValue(new HotelCategory(""));
             binder.setBean(this.entry);
+            refreshCategories();
         }
 
         @Override
         public void onUpdateClick() {
             //validate
-            BinderValidationStatus<SingleContainer<String>> validationStatus = binder.validate();
+            BinderValidationStatus<SingleContainer<HotelCategory>> validationStatus = binder.validate();
 
             if (validationStatus.hasErrors()) {
-                Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+                Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
                 return;
             }
-            String newValue=entry.getValue();
+            HotelCategory newValue=entry.getValue();
 
             //set new value
             for (Hotel h : managedItems) {
-                h.setName(newValue);
+                h.setCategory(newValue);
             }
             //save
             try{
@@ -630,16 +649,46 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-
-            //enclosing class method
-            hideForm();
-
         }
 
         @Override
         public void onCancelClick() {
-            //enclosing class method
-            hideForm();
+        }
+
+        private void refreshCategories(){
+            //clear caption
+            field.setSelectedItem(new HotelCategory(""));
+            //refresh content
+            field.setItems(iterableToList(hotelCategoryService.findAll()));
+        }
+    }
+
+    private class NonSelectedState implements UpdateFieldState{
+        //components
+        Layout layout;
+        Label label;
+
+        public NonSelectedState() {
+            label=new Label("Select field to manage");
+            layout=new VerticalLayout(label);
+        }
+
+        @Override
+        public Layout getContent() {
+            return layout;
+        }
+
+        @Override
+        public void refreshContent() {
+            updateButton.setVisible(false);
+        }
+
+        @Override
+        public void onUpdateClick() {
+        }
+
+        @Override
+        public void onCancelClick() {
         }
     }
 

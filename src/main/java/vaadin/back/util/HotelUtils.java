@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Octoplar on 14.05.2017.
  */
 public class HotelUtils {
-    public static String ValidationErrorsListToString(List<ValidationResult> results){
+    public static String validationErrorsListToString(List<ValidationResult> results){
         StringBuilder sb=new StringBuilder();
         for (ValidationResult result : results) {
             sb.append(result.getErrorMessage());

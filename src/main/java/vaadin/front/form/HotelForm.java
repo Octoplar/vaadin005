@@ -2,7 +2,6 @@ package vaadin.front.form;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
-import com.vaadin.data.ValidationResult;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
@@ -16,8 +15,9 @@ import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
 
 import javax.persistence.OptimisticLockException;
-import java.util.ArrayList;
-import java.util.List;
+
+import static vaadin.back.util.HotelUtils.iterableToList;
+import static vaadin.back.util.HotelUtils.validationErrorsListToString;
 
 
 /**
@@ -144,7 +144,7 @@ public class HotelForm extends FormLayout {
         BinderValidationStatus<Hotel> validationStatus = hotelBinder.validate();
 
         if (validationStatus.hasErrors()) {
-            Notification.show(ValidationErrorsListToString(validationStatus.getValidationErrors()));
+            Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
             return;
         }
         //save
@@ -197,22 +197,6 @@ public class HotelForm extends FormLayout {
         hotelBinder.forField(category).asRequired("Category is required").bind(Hotel::getCategory, Hotel::setCategory);
     }
 
-    //readable errors notification
-    private String ValidationErrorsListToString(List<ValidationResult> results){
-        StringBuilder sb=new StringBuilder();
-        for (ValidationResult result : results) {
-            sb.append(result.getErrorMessage());
-            sb.append("\r\n");
-        }
-        return sb.toString();
-    }
 
-    private <T> List<T> iterableToList(Iterable<T> iterable){
-        if (iterable instanceof List)
-            return (List<T>)iterable;
-        List<T> result= new ArrayList<T>();
-        iterable.forEach(result::add);
-        return result;
-    }
 
 }
