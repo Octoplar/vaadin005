@@ -89,6 +89,7 @@ public class HotelBulkForm extends FormLayout {
         contentMap.put(CATEGORY, new UpdateCategoryFieldState());
 
         //native select
+        fieldSelector=new NativeSelect<>();
         fieldSelector.setItems(Arrays.asList(NONE, NAME, ADDRESS, RATING, URL, OPERATES_FROM, DESCRIPTION, CATEGORY));
         fieldSelector.setSelectedItem(NONE);
         fieldSelector.addValueChangeListener(e->fieldSelectorOnValueChange());
@@ -109,9 +110,7 @@ public class HotelBulkForm extends FormLayout {
         }
 
         fieldSelector.setSelectedItem(NONE);
-
-
-        fieldSelector.setSelectedItem(null);
+        currentState=contentMap.get(fieldSelector.getSelectedItem());
         repaint();
     }
 
@@ -159,7 +158,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<String>> binder;
 
         //entry
-        SingleContainer<String> entry;
+        SingleContainer<String> entry=new SingleContainer<>();
 
         //components
         Layout layout;
@@ -231,7 +230,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<String>> binder;
 
         //entry
-        SingleContainer<String> entry;
+        SingleContainer<String> entry=new SingleContainer<>();
 
         //components
         Layout layout;
@@ -302,7 +301,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<String>> binder;
 
         //entry
-        SingleContainer<String> entry;
+        SingleContainer<String> entry=new SingleContainer<>();
 
         //components
         Layout layout;
@@ -374,7 +373,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<String>> binder;
 
         //entry
-        SingleContainer<String> entry;
+        SingleContainer<String> entry=new SingleContainer<>();
 
         //components
         Layout layout;
@@ -446,7 +445,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<Long>> binder;
 
         //entry
-        SingleContainer<Long> entry;
+        SingleContainer<Long> entry=new SingleContainer<>();
 
         //components
         Layout layout;
@@ -518,7 +517,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<Integer>> binder;
 
         //entry
-        SingleContainer<Integer> entry;
+        SingleContainer<Integer> entry=new SingleContainer<>();
 
         //components
         Layout layout;
@@ -591,7 +590,7 @@ public class HotelBulkForm extends FormLayout {
         Binder<SingleContainer<HotelCategory>> binder;
 
         //entry
-        SingleContainer<HotelCategory> entry;
+        SingleContainer<HotelCategory> entry=new SingleContainer<>();
 
         //components
         Layout layout;

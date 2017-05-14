@@ -212,7 +212,7 @@ public class MyUI extends UI {
         bulkPopupButton.addClickListener(e-> bulkPopupButtonClick());
         bulkPopupButton.setVisible(false);
 
-        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton);
+        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkPopupButton);
     }
 
     private Layout configureHotelGridAndFormLayout(){
@@ -308,6 +308,7 @@ public class MyUI extends UI {
         //0 case
         if (values.size()==0){
             bulkPopupButton.setVisible(false);
+            hotelForm.setVisible(false);
             return;
         }
         //1 case
