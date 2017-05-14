@@ -57,9 +57,7 @@ public class MyUI extends UI {
 
 
     //===================components====================================================================================
-    //popup
-    private PopupView bulkPopup;
-    private HotelBulkForm hotelBulkForm;
+
 
     //===========================menu=========================================
     private MenuBar menuBar=new MenuBar();
@@ -104,7 +102,10 @@ public class MyUI extends UI {
     private TextField addressFilter=new TextField();
     private Button clearAddressFilterButton = new Button(FontAwesome.TIMES);
     private Button createNewHotelButton = new Button();
-    private Button bulkPopupButton = new Button();
+    //popup
+    private PopupView bulkPopup;
+    private HotelBulkForm hotelBulkForm;
+
 
     //menuItem 2 components===============================================
     private Grid<HotelCategory> hotelCategoryGrid;
@@ -215,12 +216,9 @@ public class MyUI extends UI {
         hotelBulkForm.setVisible(true);
         bulkPopup=new PopupView("Bulk form", hotelBulkForm);
         bulkPopup.setVisible(false);
-        bulkPopupButton.setCaption("");
-        bulkPopupButton.addClickListener(e-> bulkPopupButtonClick());
-        bulkPopupButton.setVisible(false);
-        Layout bulkLayout=new HorizontalLayout(bulkPopupButton, bulkPopup);
+        bulkPopup.addPopupVisibilityListener(e-> bulkPopupClick(e));
 
-        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkLayout);
+        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkPopup);
     }
 
     private Layout configureHotelGridAndFormLayout(){
@@ -315,14 +313,12 @@ public class MyUI extends UI {
         List<Hotel> values=new ArrayList<Hotel>(e.getValue());
         //0 case
         if (values.size()==0){
-            bulkPopupButton.setVisible(false);
             bulkPopup.setVisible(false);
             hotelForm.setVisible(false);
             return;
         }
         //1 case
         if (values.size()==1){
-            bulkPopupButton.setVisible(false);
             bulkPopup.setVisible(false);
             Hotel h=values.get(0);
             if(h==null)
@@ -335,7 +331,6 @@ public class MyUI extends UI {
         //multi case
         else {
             hotelForm.setVisible(false);
-            bulkPopupButton.setVisible(true);
             bulkPopup.setVisible(true);
         }
 
@@ -401,9 +396,11 @@ public class MyUI extends UI {
         hotelForm.setVisible(true);
     }
 
-    private void bulkPopupButtonClick(){
-        hotelBulkForm.setManagedItems(hotelGrid.asMultiSelect().getSelectedItems());
-        bulkPopup.setPopupVisible(true);
+    private void bulkPopupClick(PopupView.PopupVisibilityEvent e){
+        if (e.isPopupVisible()) {
+            hotelBulkForm.setManagedItems(hotelGrid.asMultiSelect().getSelectedItems());
+            //bulkPopup.setPopupVisible(true);
+        }
     }
 
 
