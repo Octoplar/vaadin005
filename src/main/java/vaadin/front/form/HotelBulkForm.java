@@ -214,8 +214,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setName(newValue);
             }
-            //clear grid selection
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -291,7 +289,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setAddress(newValue);
             }
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -368,8 +365,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setUrl(newValue);
             }
-
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -446,7 +441,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setDescription(newValue);
             }
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -523,8 +517,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setOperatesFrom(newValue);
             }
-
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -602,7 +594,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setRating(newValue);
             }
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -681,7 +672,6 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setCategory(newValue);
             }
-            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);

@@ -145,13 +145,8 @@ public class MyUI extends UI {
 
 
 
-    //refresh grid content
-    public void clearHotelGridSelection(){
-        hotelGrid.asMultiSelect().clear();
-    }
-    public void refreshHotelGridContent(){
-        hotelGrid.asMultiSelect().clear();
 
+    public void refreshHotelGridContent(){
         //eager load items in grid
         //hotelGrid.setItems(iterableToList(hotelService.findAll()));
 
@@ -168,7 +163,6 @@ public class MyUI extends UI {
         addressFilter.clear();
     }
     public void refreshHotelCategoryGridContent(){
-        hotelCategoryGrid.asMultiSelect().clear();
         hotelCategoryGrid.setItems(iterableToList(hotelCategoryService.findAll()));
         //hide form
         hotelCategoryForm.setVisible(false);
