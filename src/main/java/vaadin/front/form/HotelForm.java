@@ -8,14 +8,14 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import vaadin.MyUI;
-import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
+import vaadin.front.converter.LocalDateToLongDaysConverter;
+import vaadin.front.validator.*;
 
 import javax.persistence.OptimisticLockException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +126,7 @@ public class HotelForm extends FormLayout {
     private void delete(){
         //delete
         try{
+
             hotelService.delete(this.hotel);
         }
         catch (OptimisticLockException e){
@@ -164,32 +165,32 @@ public class HotelForm extends FormLayout {
 
         hotelBinder.forField(name)
                 .asRequired("Name is required")
-                .withValidator(s->(s!=null&&s.length()<=255), "Maximum name length is 255")
+                .withValidator(new HotelNamePredicate(), HotelNamePredicate.MESSAGE)
                 .bind(Hotel::getName, Hotel::setName);
 
         hotelBinder.forField(address)
                 .asRequired("Address is required")
-                .withValidator(s->(s!=null&&s.length()<=255), "Maximum address length is 255")
+                .withValidator(new HotelAddressPredicate(), HotelAddressPredicate.MESSAGE)
                 .bind(Hotel::getAddress, Hotel::setAddress);
 
         hotelBinder.forField(description)
-                .withValidator(s->(s!=null&&s.length()<=65535), "Maximum description length is 65535")
+                .withValidator(new HotelDescriptionPredicate(), HotelDescriptionPredicate.MESSAGE)
                 .bind(Hotel::getDescription, Hotel::setDescription);
 
         hotelBinder.forField(url)
                 .asRequired("URL is required")
-                .withValidator(s->(s!=null&&s.length()<=255), "Maximum url length is 255")
+                .withValidator(new HotelUrlPredicate(), HotelUrlPredicate.MESSAGE)
                 .bind(Hotel::getUrl,Hotel::setUrl);
 
         hotelBinder.forField(rating)
-                .withConverter(new StringToIntegerConverter(0, "Invalid integer value"))
                 .asRequired("Rating is required")
-                .withValidator(i->(i>0&&i<6), "Rating must be integer between 1..5 inclusive")
+                .withConverter(new StringToIntegerConverter(0, "Invalid integer value"))
+                .withValidator(new HotelRatingPredicate(), HotelRatingPredicate.MESSAGE)
                 .bind(Hotel::getRating, Hotel::setRating);
 
         hotelBinder.forField(operatesFrom)
-                .withValidator(i->(i.compareTo(LocalDate.now())<0), "Date can not be future")
                 .asRequired("Date is required")
+                .withValidator(new HotelOperatesFromPredicate(), HotelOperatesFromPredicate.MESSAGE)
                 .withConverter(new LocalDateToLongDaysConverter())
                 .bind(Hotel::getOperatesFrom, Hotel::setOperatesFrom);
 
