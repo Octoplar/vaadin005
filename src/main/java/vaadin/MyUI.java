@@ -146,6 +146,9 @@ public class MyUI extends UI {
 
 
     //refresh grid content
+    public void clearHotelGridSelection(){
+        hotelGrid.asMultiSelect().clear();
+    }
     public void refreshHotelGridContent(){
         hotelGrid.asMultiSelect().clear();
 

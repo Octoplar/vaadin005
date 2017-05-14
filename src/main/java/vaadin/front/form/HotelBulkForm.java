@@ -138,11 +138,9 @@ public class HotelBulkForm extends FormLayout {
 
     private void onUpdateClick(){
         currentState.onUpdateClick();
-        ui.refreshHotelGridContent();
-        ui.hidePopup();
     }
     private void onCancelClick(){
-        ui.hidePopup();
+        currentState.onCancelClick();
     }
 
 
@@ -216,6 +214,8 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setName(newValue);
             }
+            //clear grid selection
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -223,10 +223,14 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
+
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
     }
 
@@ -287,6 +291,7 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setAddress(newValue);
             }
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -294,11 +299,13 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
-
+            ui.hidePopup();
         }
     }
 
@@ -361,6 +368,8 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setUrl(newValue);
             }
+
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -368,10 +377,13 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
     }
 
@@ -434,6 +446,7 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setDescription(newValue);
             }
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -441,10 +454,13 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
     }
 
@@ -507,6 +523,8 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setOperatesFrom(newValue);
             }
+
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -514,10 +532,13 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
     }
 
@@ -581,6 +602,7 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setRating(newValue);
             }
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -588,10 +610,13 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
     }
 
@@ -656,6 +681,7 @@ public class HotelBulkForm extends FormLayout {
             for (Hotel h : managedItems) {
                 h.setCategory(newValue);
             }
+            ui.clearHotelGridSelection();
             //save
             try{
                 hotelService.saveAll(managedItems);
@@ -663,10 +689,13 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
+            ui.refreshHotelGridContent();
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
 
         private void refreshCategories(){
@@ -699,10 +728,12 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void onUpdateClick() {
+            ui.hidePopup();
         }
 
         @Override
         public void onCancelClick() {
+            ui.hidePopup();
         }
     }
 
