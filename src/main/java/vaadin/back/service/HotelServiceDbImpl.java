@@ -8,6 +8,7 @@ import vaadin.back.entity.Hotel;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Created by Octoplar on 10.05.2017. *
@@ -66,6 +67,23 @@ public class HotelServiceDbImpl implements HotelService {
     @Override
     public void delete(Hotel hotel) {
         em.remove(em.contains(hotel) ? hotel : em.merge(hotel));
+    }
+
+    @Override
+    public void deleteAll(List<Hotel> hotels) {
+        for (Hotel hotel : hotels) {
+            em.remove(em.contains(hotel) ? hotel : em.merge(hotel));
+        }
+    }
+
+    @Override
+    public void saveAll(List<Hotel> hotels) {
+        for (Hotel hotel : hotels) {
+            if(hotel.getId()==null)
+                em.persist(hotel);
+            else
+                em.merge(hotel);
+        }
     }
 
     @Override

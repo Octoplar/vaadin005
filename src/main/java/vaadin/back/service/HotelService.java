@@ -2,6 +2,8 @@ package vaadin.back.service;
 
 import vaadin.back.entity.Hotel;
 
+import java.util.List;
+
 /**
  * Created by Octoplar on 09.05.2017.
  */
@@ -11,6 +13,8 @@ public interface HotelService {
     Iterable<Hotel> findAllAddressFilter(String filter);
     void save(Hotel hotel);
     void delete(Hotel hotel);
+    void deleteAll(List<Hotel> hotels);
+    void saveAll(List<Hotel> hotels);
 
     //paging support
     int AllCount();
