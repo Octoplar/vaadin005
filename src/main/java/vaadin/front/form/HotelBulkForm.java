@@ -65,7 +65,8 @@ public class HotelBulkForm extends FormLayout {
         this.ui = ui;
 
         //size/visibility
-        this.setSizeUndefined();
+        this.setHeight(500f, Unit.PIXELS);
+        this.setWidth(500f, Unit.PIXELS);
         this.setVisible(true);
 
         //buttons config
@@ -137,9 +138,8 @@ public class HotelBulkForm extends FormLayout {
 
     private void onUpdateClick(){
         currentState.onUpdateClick();
-        currentState.refreshContent();
-        ui.hidePopup();
         ui.refreshHotelGridContent();
+        ui.hidePopup();
     }
     private void onCancelClick(){
         ui.hidePopup();

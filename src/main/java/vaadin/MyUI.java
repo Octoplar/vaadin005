@@ -124,11 +124,7 @@ public class MyUI extends UI {
         hotelCategoryEditorContent=new VerticalLayout(configureHotelCategoryPageLayout());
         menuLayout=configureMenuBarLayout();
 
-        hotelBulkForm=new HotelBulkForm(hotelService, hotelCategoryService, this);
-        hotelBulkForm.setVisible(true);
-        bulkPopup=new PopupView("Bulk form", hotelBulkForm);
-        //todo
-        bulkPopup.setSizeFull();
+
 
         contentMap=new IdentityHashMap<>();
         contentMap.put(menuItemHotel, hotelEditorContent);
@@ -168,7 +164,7 @@ public class MyUI extends UI {
         addressFilter.clear();
     }
     public void refreshHotelCategoryGridContent(){
-        hotelGrid.asMultiSelect().clear();
+        hotelCategoryGrid.asMultiSelect().clear();
         hotelCategoryGrid.setItems(iterableToList(hotelCategoryService.findAll()));
         //hide form
         hotelCategoryForm.setVisible(false);
@@ -213,11 +209,18 @@ public class MyUI extends UI {
         createNewHotelButton.setCaption("Add new hotel");
         createNewHotelButton.addClickListener(e-> createNewHotelButtonClick());
 
-        bulkPopupButton.setCaption("Manage all selected");
+
+        //bind popup on button
+        hotelBulkForm=new HotelBulkForm(hotelService, hotelCategoryService, this);
+        hotelBulkForm.setVisible(true);
+        bulkPopup=new PopupView("Bulk form", hotelBulkForm);
+        bulkPopup.setVisible(false);
+        bulkPopupButton.setCaption("");
         bulkPopupButton.addClickListener(e-> bulkPopupButtonClick());
         bulkPopupButton.setVisible(false);
+        Layout bulkLayout=new HorizontalLayout(bulkPopupButton, bulkPopup);
 
-        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkPopupButton);
+        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkLayout);
     }
 
     private Layout configureHotelGridAndFormLayout(){
@@ -313,12 +316,14 @@ public class MyUI extends UI {
         //0 case
         if (values.size()==0){
             bulkPopupButton.setVisible(false);
+            bulkPopup.setVisible(false);
             hotelForm.setVisible(false);
             return;
         }
         //1 case
         if (values.size()==1){
             bulkPopupButton.setVisible(false);
+            bulkPopup.setVisible(false);
             Hotel h=values.get(0);
             if(h==null)
                 hotelForm.setVisible(false);
@@ -331,6 +336,7 @@ public class MyUI extends UI {
         else {
             hotelForm.setVisible(false);
             bulkPopupButton.setVisible(true);
+            bulkPopup.setVisible(true);
         }
 
 
@@ -438,7 +444,7 @@ public class MyUI extends UI {
     private void repaint(){
         VerticalLayout layout = new VerticalLayout();
 
-        layout.addComponents(menuLayout, currentContent, bulkPopup);
+        layout.addComponents(menuLayout, currentContent);
 
         setContent(layout);
     }
