@@ -6,17 +6,16 @@ import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import vaadin.MyUI;
 import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
+import vaadin.front.view.HotelView;
 
 import javax.persistence.OptimisticLockException;
 
-import static vaadin.util.HotelUtils.iterableToList;
 import static vaadin.util.HotelUtils.validationErrorsListToString;
 
 
@@ -46,19 +45,19 @@ public class HotelForm extends FormLayout {
 
 
     //owner reference
-    private MyUI ui;
+    private HotelView ui;
 
     //binder
     private Binder<Hotel> hotelBinder;
 
 
-    public HotelForm(MyUI ui, HotelService hotelService, HotelCategoryService hotelCategoryService) {
+    public HotelForm(HotelView ui, HotelService hotelService, HotelCategoryService hotelCategoryService) {
         this.ui = ui;
         this.hotelService=hotelService;
         this.hotelCategoryService=hotelCategoryService;
 
+        //init and add components
         Layout buttons=new HorizontalLayout(save, delete);
-
         addComponents(name, address, rating, category, operatesFrom, url, description,buttons);
 
         //=========================comboBox=====================================
@@ -118,7 +117,7 @@ public class HotelForm extends FormLayout {
 
     //refresh categories values
     public void refreshCategories(){
-        category.setItems(iterableToList(hotelCategoryService.findAll()));
+        category.setItems(hotelCategoryService.findAll());
     }
 
 
@@ -134,7 +133,7 @@ public class HotelForm extends FormLayout {
         }
 
         //refresh grid
-        ui.refreshHotelGridContent();
+        ui.refresh();
         //hide form
         setVisible(false);
     }
@@ -155,7 +154,7 @@ public class HotelForm extends FormLayout {
             Notification.show("This hotel data is out of date, changes not saved.");
         }
         //refresh grid
-        ui.refreshHotelGridContent();
+        ui.refresh();
         //hide form
         setVisible(false);
     }

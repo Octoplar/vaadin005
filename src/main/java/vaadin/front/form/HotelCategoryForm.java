@@ -5,9 +5,9 @@ import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import vaadin.MyUI;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
+import vaadin.front.view.CategoryView;
 
 import javax.persistence.OptimisticLockException;
 
@@ -27,7 +27,7 @@ public class HotelCategoryForm extends FormLayout {
 
 
     //owner
-    private final MyUI ui;
+    private final CategoryView ui;
 
     //entity to display
     private HotelCategory hotelCategory;
@@ -39,7 +39,7 @@ public class HotelCategoryForm extends FormLayout {
 
 
 
-    public HotelCategoryForm(MyUI ui, HotelCategoryService hotelCategoryService) {
+    public HotelCategoryForm(CategoryView ui, HotelCategoryService hotelCategoryService) {
         this.ui = ui;
         this.hotelCategoryService=hotelCategoryService;
 
@@ -112,8 +112,8 @@ public class HotelCategoryForm extends FormLayout {
         catch (OptimisticLockException e){
             Notification.show("This category data is out of date, changes not saved.");
         }
-        //update
-        ui.refreshHotelCategoryGridContent();
+        //update owner content
+        ui.refresh();
         //hide
         setVisible(false);
     }
@@ -125,8 +125,8 @@ public class HotelCategoryForm extends FormLayout {
         catch (OptimisticLockException e){
             Notification.show("This category data is out of date, changes not saved.");
         }
-        //update
-        ui.refreshHotelCategoryGridContent();
+        //update owner content
+        ui.refresh();
         //hide
         setVisible(false);
     }

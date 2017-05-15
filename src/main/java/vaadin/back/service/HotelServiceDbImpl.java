@@ -5,9 +5,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import vaadin.back.entity.Hotel;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -27,14 +25,14 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<Hotel> findAll() {
+    public List<Hotel> findAll() {
         Query q = em.createQuery("select e from Hotel as e");
         return q.getResultList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<Hotel> findAllNameFilter(String filter) {
+    public List<Hotel> findAllNameFilter(String filter) {
         if (filter == null) {
             return this.findAll();
         }
@@ -46,7 +44,7 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<Hotel> findAllAddressFilter(String filter) {
+    public List<Hotel> findAllAddressFilter(String filter) {
         if (filter == null) {
             return this.findAll();
         }
@@ -58,10 +56,18 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     public void save(Hotel hotel) {
-        if(hotel.getId()==null)
-            em.persist(hotel);
-        else
-            em.merge(hotel);
+        try{
+            if(hotel.getId()==null)
+                em.persist(hotel);
+            else
+                em.merge(hotel);
+        }
+        catch (EntityNotFoundException e){
+            //attempting to save category that is already deleted
+            throw new OptimisticLockException(e);
+        }
+
+
     }
 
     @Override
@@ -78,11 +84,17 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     public void saveAll(List<Hotel> hotels) {
-        for (Hotel hotel : hotels) {
-            if(hotel.getId()==null)
-                em.persist(hotel);
-            else
-                em.merge(hotel);
+        try{
+            for (Hotel hotel : hotels) {
+                if(hotel.getId()==null)
+                    em.persist(hotel);
+                else
+                    em.merge(hotel);
+            }
+        }
+        catch (EntityNotFoundException e){
+            //attempting to save category that is already deleted
+            throw new OptimisticLockException(e);
         }
     }
 
@@ -111,7 +123,7 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<Hotel> findAll(int fromIndex, int count) {
+    public List<Hotel> findAll(int fromIndex, int count) {
         Query q = em.createQuery("select e from Hotel as e");
         q.setFirstResult(fromIndex);
         q.setMaxResults(count);
@@ -121,7 +133,7 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<Hotel> findAllNameFilter(String filter, int fromIndex, int count) {
+    public List<Hotel> findAllNameFilter(String filter, int fromIndex, int count) {
         if (filter == null) {
             return this.findAll(fromIndex, count);
         }
@@ -135,7 +147,7 @@ public class HotelServiceDbImpl implements HotelService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<Hotel> findAllAddressFilter(String filter, int fromIndex, int count) {
+    public List<Hotel> findAllAddressFilter(String filter, int fromIndex, int count) {
         if (filter == null) {
             return this.findAll(fromIndex, count);
         }

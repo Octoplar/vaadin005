@@ -6,20 +6,19 @@ import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import vaadin.MyUI;
 import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
-import vaadin.util.SingleContainer;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
+import vaadin.front.view.HotelView;
+import vaadin.util.SingleContainer;
 
 import javax.persistence.OptimisticLockException;
 import java.util.*;
 
 import static vaadin.util.HotelUtils.validationErrorsListToString;
-import static vaadin.util.HotelUtils.iterableToList;
 
 /**
  * Created by Octoplar on 14.05.2017.
@@ -30,7 +29,7 @@ public class HotelBulkForm extends FormLayout {
     private HotelCategoryService hotelCategoryService;
 
     //owner reference
-    private MyUI ui;
+    private HotelView ui;
 
     private List<Hotel> managedItems;
 
@@ -59,7 +58,7 @@ public class HotelBulkForm extends FormLayout {
 
 
 
-    public HotelBulkForm(HotelService hotelService, HotelCategoryService hotelCategoryService, MyUI ui) {
+    public HotelBulkForm(HotelService hotelService, HotelCategoryService hotelCategoryService, HotelView ui) {
         this.hotelService = hotelService;
         this.hotelCategoryService = hotelCategoryService;
         this.ui = ui;
@@ -221,7 +220,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
 
         }
@@ -296,7 +295,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
         }
 
@@ -372,7 +371,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
         }
 
@@ -448,7 +447,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
         }
 
@@ -524,7 +523,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
         }
 
@@ -601,7 +600,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
         }
 
@@ -679,7 +678,7 @@ public class HotelBulkForm extends FormLayout {
             catch (OptimisticLockException e){
                 Notification.show("Data is out of date, changes not saved.");
             }
-            ui.refreshHotelGridContent();
+            ui.refresh();
             ui.hidePopup();
         }
 
@@ -692,7 +691,7 @@ public class HotelBulkForm extends FormLayout {
             //clear caption
             field.setSelectedItem(new HotelCategory(""));
             //refresh content
-            field.setItems(iterableToList(hotelCategoryService.findAll()));
+            field.setItems(hotelCategoryService.findAll());
         }
     }
 

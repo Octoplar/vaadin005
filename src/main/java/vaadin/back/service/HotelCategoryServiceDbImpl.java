@@ -19,12 +19,9 @@ public class HotelCategoryServiceDbImpl implements HotelCategoryService{
     @PersistenceContext(name = "demo_hotels")
     EntityManager em;
 
-    //special null value to display
-    private final HotelCategory defaultPrototype=new HotelCategory("Undefined");
-
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HotelCategory> findAll() {
+    public List<HotelCategory> findAll() {
 
         Query q = em.createQuery("from HotelCategory");
         return q.getResultList();
@@ -49,14 +46,4 @@ public class HotelCategoryServiceDbImpl implements HotelCategoryService{
             em.remove(em.contains(entity) ? entity : em.merge(entity));
         }
     }
-
-    @Override
-    public HotelCategory getDefaultCategory() {
-        try {
-            return defaultPrototype.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

@@ -8,9 +8,9 @@ import java.util.List;
  * Created by Octoplar on 09.05.2017.
  */
 public interface HotelService {
-    Iterable<Hotel> findAll();
-    Iterable<Hotel> findAllNameFilter(String filter);
-    Iterable<Hotel> findAllAddressFilter(String filter);
+    List<Hotel> findAll();
+    List<Hotel> findAllNameFilter(String filter);
+    List<Hotel> findAllAddressFilter(String filter);
     void save(Hotel hotel);
     void delete(Hotel hotel);
     void deleteAll(List<Hotel> hotels);
@@ -20,8 +20,8 @@ public interface HotelService {
     int AllCount();
     int nameFilterCount(String filter);
     int addressFilterCount(String filter);
-    Iterable<Hotel> findAll(int fromIndex, int count);
-    Iterable<Hotel> findAllNameFilter(String filter, int fromIndex, int count);
-    Iterable<Hotel> findAllAddressFilter(String filter, int fromIndex, int count);
+    List<Hotel> findAll(int fromIndex, int count);
+    List<Hotel> findAllNameFilter(String filter, int fromIndex, int count);
+    List<Hotel> findAllAddressFilter(String filter, int fromIndex, int count);
 
 }
