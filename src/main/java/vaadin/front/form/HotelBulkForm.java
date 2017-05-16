@@ -194,7 +194,7 @@ public class HotelBulkForm extends FormLayout {
         @Override
         public void refreshContent() {
             updateButton.setVisible(true);
-            entry.setValue(" ");
+            entry.setValue("");
             binder.setBean(this.entry);
         }
 
