@@ -18,7 +18,7 @@ import static vaadin.util.HotelUtils.validationErrorsListToString;
  */
 public class HotelCategoryForm extends FormLayout {
     //service
-    HotelCategoryService hotelCategoryService;
+    private HotelCategoryService hotelCategoryService;
 
     //components
     private TextField hotelCategoryField;

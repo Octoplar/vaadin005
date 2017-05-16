@@ -23,6 +23,7 @@ import static vaadin.util.HotelUtils.validationErrorsListToString;
 /**
  * Created by Octoplar on 14.05.2017.
  */
+
 public class HotelBulkForm extends FormLayout {
     //services
     private HotelService hotelService;
@@ -46,6 +47,7 @@ public class HotelBulkForm extends FormLayout {
     private Map<String, UpdateFieldState> contentMap;
 
     //field names
+
     private static String NAME="Name";
     private static String ADDRESS="Address";
     private static String RATING="Rating";
@@ -64,8 +66,9 @@ public class HotelBulkForm extends FormLayout {
         this.ui = ui;
 
         //size/visibility
-        this.setHeight(500f, Unit.PIXELS);
-        this.setWidth(500f, Unit.PIXELS);
+//        this.setHeight(500f, Unit.PIXELS);
+//        this.setWidth(500f, Unit.PIXELS);
+        this.setSizeUndefined();
         this.setVisible(true);
 
         //buttons config
@@ -166,7 +169,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         TextField field;
 
-        public UpdateNameFieldState() {
+        UpdateNameFieldState() {
 
             field=new TextField("Name");
             field.setPlaceholder("Enter new name here");
@@ -243,7 +246,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         TextField field;
 
-        public UpdateAddressFieldState() {
+        UpdateAddressFieldState() {
 
             field=new TextField("Address");
             field.setPlaceholder("Enter new address here");
@@ -317,7 +320,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         TextField field;
 
-        public UpdateUrlFieldState() {
+        UpdateUrlFieldState() {
 
             field=new TextField("URL");
             field.setPlaceholder("Enter new URL here");
@@ -393,7 +396,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         TextArea field;
 
-        public UpdateDescriptionFieldState() {
+        UpdateDescriptionFieldState() {
 
             field=new TextArea("Description");
             field.setPlaceholder("Enter new Description here");
@@ -469,7 +472,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         DateField field;
 
-        public UpdateOperatesFromFieldState() {
+        UpdateOperatesFromFieldState() {
 
             field=new DateField();
             field.setDescription("Date from Dec 02 BDT 292269055 to now exclusive");
@@ -545,7 +548,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         TextField field;
 
-        public UpdateRatingFieldState() {
+        UpdateRatingFieldState() {
 
             field=new TextField("Rating");
             field.setPlaceholder("Enter new Rating here");
@@ -622,7 +625,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         private ComboBox<HotelCategory> field;
 
-        public UpdateCategoryFieldState() {
+        UpdateCategoryFieldState() {
 
             field=new ComboBox<>("Category");
             field.setDescription("Category from drop list");
@@ -700,7 +703,7 @@ public class HotelBulkForm extends FormLayout {
         Layout layout;
         Label label;
 
-        public NonSelectedState() {
+        NonSelectedState() {
             label=new Label("Select field to manage");
             layout=new VerticalLayout(label);
         }

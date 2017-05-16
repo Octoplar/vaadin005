@@ -45,6 +45,7 @@ public class HotelView extends VerticalLayout implements View {
     //popup
     private PopupView bulkPopup;
     private HotelBulkForm hotelBulkForm;
+    private Button bulkButton;
 
 
 
@@ -64,6 +65,7 @@ public class HotelView extends VerticalLayout implements View {
 
     //popup callback
     public void hidePopup(){
+        bulkPopup.setVisible(false);
         bulkPopup.setPopupVisible(false);
     }
 
@@ -126,12 +128,19 @@ public class HotelView extends VerticalLayout implements View {
         //add popup
         hotelBulkForm=new HotelBulkForm(hotelService, hotelCategoryService, this);
         hotelBulkForm.setVisible(true);
-        bulkPopup=new PopupView("Bulk form", hotelBulkForm);
+        //invisible
+        bulkButton=new Button();
+        bulkButton.setCaption("Bulk");
+        bulkButton.setDescription("Show bulk form");
+        bulkButton.addClickListener(e->bulkButtonClick());
+        bulkButton.setVisible(false);
+        bulkPopup=new PopupView(null, hotelBulkForm);
         bulkPopup.setVisible(false);
-        bulkPopup.addPopupVisibilityListener(e-> bulkPopupClick(e));
+        bulkPopup.setHideOnMouseOut(false);
+        //bulkPopup.addPopupVisibilityListener(e-> bulkPopupClick(e));
 
         //return result
-        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkPopup);
+        return new HorizontalLayout(nameFilterLayout, addressFilterLayout, createNewHotelButton, bulkButton, bulkPopup);
     }
 
     private Layout configureHotelGridAndFormLayout(){
@@ -213,6 +222,12 @@ public class HotelView extends VerticalLayout implements View {
         hotelForm.setVisible(true);
     }
 
+    private void  bulkButtonClick(){
+        bulkPopup.setVisible(true);
+        bulkPopup.setPopupVisible(true);
+        hotelBulkForm.setManagedItems(hotelGrid.asMultiSelect().getSelectedItems());
+    }
+
     private void bulkPopupClick(PopupView.PopupVisibilityEvent e){
         if (e.isPopupVisible()) {
             hotelBulkForm.setManagedItems(hotelGrid.asMultiSelect().getSelectedItems());
@@ -225,13 +240,13 @@ public class HotelView extends VerticalLayout implements View {
         List<Hotel> values=new ArrayList<Hotel>(e.getValue());
         //0 case
         if (values.size()==0){
-            bulkPopup.setVisible(false);
+            bulkButton.setVisible(false);
             hotelForm.setVisible(false);
             return;
         }
         //1 case
         if (values.size()==1){
-            bulkPopup.setVisible(false);
+            bulkButton.setVisible(false);
             Hotel h=values.get(0);
             if(h==null)
                 hotelForm.setVisible(false);
@@ -243,7 +258,7 @@ public class HotelView extends VerticalLayout implements View {
         //multi case
         else {
             hotelForm.setVisible(false);
-            bulkPopup.setVisible(true);
+            bulkButton.setVisible(true);
         }
 
 
