@@ -94,11 +94,7 @@ public class HotelBulkForm extends FormLayout {
         fieldSelector.setItems(Arrays.asList(NAME, ADDRESS, RATING, URL, OPERATES_FROM, DESCRIPTION, CATEGORY));
         fieldSelector.setSelectedItem(null);
         fieldSelector.addValueChangeListener(e->fieldSelectorOnValueChange());
-        //current state
 
-        Optional o=fieldSelector.getSelectedItem();
-        currentState=contentMap.get(o.isPresent()?o.get():null);
-        //set content
     }
 
     public void setManagedItems(Set<Hotel> items){
@@ -111,7 +107,7 @@ public class HotelBulkForm extends FormLayout {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
-
+        //clear selection
         fieldSelector.setSelectedItem(null);
         Optional o=fieldSelector.getSelectedItem();
         currentState=contentMap.get(o.isPresent()?o.get():null);
@@ -131,8 +127,8 @@ public class HotelBulkForm extends FormLayout {
 
     }
     private void fieldSelectorOnValueChange(){
-        //switch state
 
+        //switch state
         Optional o=fieldSelector.getSelectedItem();
         currentState=contentMap.get(o.isPresent()?o.get():null);
         repaint();
@@ -196,7 +192,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -271,7 +266,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -347,7 +341,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -423,7 +416,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue("");
             binder.setBean(this.entry);
         }
@@ -499,7 +491,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue(1L);
             binder.setBean(this.entry);
         }
@@ -576,7 +567,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue(1);
             binder.setBean(this.entry);
         }
@@ -653,7 +643,6 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(true);
             entry.setValue(new HotelCategory(""));
             binder.setBean(this.entry);
             refreshCategories();
@@ -715,12 +704,12 @@ public class HotelBulkForm extends FormLayout {
 
         @Override
         public void refreshContent() {
-            updateButton.setVisible(false);
+
         }
 
         @Override
         public void onUpdateClick() {
-            ui.hidePopup();
+            Notification.show("Nothing to update");
         }
 
         @Override
