@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 		@NamedQuery(name = "Hotel.AddressFilter.Count", query = "SELECT COUNT(e.id) FROM Hotel AS e WHERE LOWER(e.address) LIKE :filter ")
 
 })
+@Table(name="HOTEL")
 public class Hotel extends AbstractEntity {
 
 

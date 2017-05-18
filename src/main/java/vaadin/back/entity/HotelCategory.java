@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
  * Created by Octoplar on 05.05.2017.
  */
 @Entity
-@Table(name="category")
+@Table(name="CATEGORY")
 public class HotelCategory extends AbstractEntity{
 
 
