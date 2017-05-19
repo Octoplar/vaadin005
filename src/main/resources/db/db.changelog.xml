@@ -52,6 +52,13 @@
 			ON DELETE SET NULL;
 		</sql>
 	</changeSet>
+	<changeSet id="add_payment_type" author="octoplar">
+		<addColumn tableName="HOTEL">
+			<column name="CASH" type="BIT(1) NOT NULL DEFAULT 0" />
+			<column name="CARD" type="BIT(1) NOT NULL DEFAULT 0" />
+			<column name="DEPOSIT" type="TINYINT" />
+		</addColumn>
+	</changeSet>
 	<changeSet id="fill_test_data" author="octoplar">
 		<sql>
 			INSERT INTO category (`OPTLOCK`, `NAME`) VALUES ('0', 'Hotel');
