@@ -60,7 +60,7 @@ public class Hotel extends AbstractEntity {
 	public Hotel() {
 	}
 
-	public Hotel(String name, String address, Integer rating, Long operatesFrom, HotelCategory category, String url, String description) {
+	public Hotel(String name, String address, Integer rating, Long operatesFrom, HotelCategory category, String url, String description, PaymentType paymentType) {
 		this.name = name;
 		this.address = address;
 		this.rating = rating;
@@ -68,6 +68,7 @@ public class Hotel extends AbstractEntity {
 		this.category = category;
 		this.url = url;
 		this.description = description;
+		this.paymentType = paymentType;
 	}
 
 	public String getName() {
@@ -125,6 +126,14 @@ public class Hotel extends AbstractEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
 	}
 
 	@Override

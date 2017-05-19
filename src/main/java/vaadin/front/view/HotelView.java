@@ -11,6 +11,7 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import vaadin.back.entity.Hotel;
+import vaadin.back.entity.PaymentType;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
 import vaadin.front.form.HotelBulkForm;
@@ -217,7 +218,7 @@ public class HotelView extends VerticalLayout implements View {
         //clear selection
         hotelGrid.asMultiSelect().clear();
         //new instance for manage
-        hotelForm.setHotel(new Hotel("", "", 1, 1L, null, "", ""));
+        hotelForm.setHotel(new Hotel("", "", 1, 1L, null, "", "", new PaymentType()));
 
         hotelForm.setVisible(true);
     }
