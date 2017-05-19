@@ -10,6 +10,7 @@ import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
+import vaadin.front.components.PaymentTypeField;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
 import vaadin.front.view.HotelView;
@@ -39,6 +40,7 @@ public class HotelForm extends FormLayout {
     private Button delete = new Button("Delete");
 
     private TextArea description = new TextArea("Description");
+    private PaymentTypeField paymentTypeField=new PaymentTypeField("Payment type");
 
     //entity to display
     private Hotel hotel;
@@ -58,7 +60,7 @@ public class HotelForm extends FormLayout {
 
         //init and add components
         Layout buttons=new HorizontalLayout(save, delete);
-        addComponents(name, address, rating, category, operatesFrom, url, description,buttons);
+        addComponents(name, address, rating, category, paymentTypeField, operatesFrom, url, description,buttons);
 
         //=========================comboBox=====================================
 
@@ -85,6 +87,7 @@ public class HotelForm extends FormLayout {
         operatesFrom.setDescription("Date from Dec 02 BDT 292269055 to now exclusive");
         url.setDescription("Any string up to 255");
         description.setDescription("Any string up to 65535");
+        paymentTypeField.setDescription("Select payment type");
     }
 
     public Hotel getHotel() {
@@ -148,6 +151,9 @@ public class HotelForm extends FormLayout {
         }
         //save
         try{
+            //TODO
+            //binder not work???
+            //hotel.setPaymentType(paymentTypeField.getValue());
             hotelService.save(hotel);
         }
         catch (OptimisticLockException e){
@@ -194,6 +200,11 @@ public class HotelForm extends FormLayout {
                 .bind(Hotel::getOperatesFrom, Hotel::setOperatesFrom);
 
         hotelBinder.forField(category).asRequired("Category is required").bind(Hotel::getCategory, Hotel::setCategory);
+
+
+        hotelBinder.forField(paymentTypeField)
+                .withValidator(new PaymentTypePredicate(), PaymentTypePredicate.MESSAGE)
+                .bind(Hotel::getPaymentType, Hotel::setPaymentType);
     }
 
 

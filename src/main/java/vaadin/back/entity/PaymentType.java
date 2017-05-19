@@ -29,7 +29,7 @@ public class PaymentType implements Cloneable, Serializable{
         this.deposit = deposit;
     }
 
-    public Boolean getCash() {
+    public Boolean isCash() {
         return cash;
     }
 
@@ -37,7 +37,7 @@ public class PaymentType implements Cloneable, Serializable{
         this.cash = cash;
     }
 
-    public Boolean getCard() {
+    public Boolean isCard() {
         return card;
     }
 
@@ -56,5 +56,15 @@ public class PaymentType implements Cloneable, Serializable{
     @Override
     public PaymentType clone() throws CloneNotSupportedException {
         return (PaymentType) super.clone();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("PaymentType{");
+        sb.append("cash=").append(cash);
+        sb.append(", card=").append(card);
+        sb.append(", deposit=").append(deposit);
+        sb.append('}');
+        return sb.toString();
     }
 }
