@@ -145,12 +145,6 @@ public class HotelForm extends FormLayout {
     }
 
     private void save(){
-        //=========================================
-        //TODO
-        //binder not works: hotel.setPaymentType() method is not used by binder
-        //hotel.setPaymentType() force call
-        hotel.setPaymentType(paymentTypeField.getValue());
-        //=========================================
         //validate
         BinderValidationStatus<Hotel> validationStatus = hotelBinder.validate();
 
