@@ -210,6 +210,9 @@ public class HotelForm extends FormLayout {
     private void paymentTypeOnValueChange(){
         if (paymentTypeField.getValue()==null||paymentTypeField.getOldValue()==null)
             return;
+        //current value not configured. skip notification
+        if (paymentTypeField.getValue().isCash().equals(paymentTypeField.getValue().isCard()))
+            return;
 
         StringBuilder sb=new StringBuilder();
         PaymentType pt=paymentTypeField.getValue();

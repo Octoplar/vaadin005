@@ -24,7 +24,7 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
     private TextField guaranty;
     private Label label;
     private Binder<PaymentType> binder;
-    private Layout layout;
+
 
     //values
     private PaymentType oldValue;
@@ -44,8 +44,6 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
         guaranty.setValueChangeMode(ValueChangeMode.LAZY);
 
         label=new Label("Payment directly in hotel");
-        layout=new VerticalLayout(radioGroup, guaranty, label);
-        layout.setSizeUndefined();
 
         //binder
         binder=new Binder<>();
@@ -64,8 +62,14 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
         //listeners
         radioGroup.addValueChangeListener(e->radioOnValueChange());
         guaranty.addValueChangeListener(e->depositOnValueChange());
-        //initial value
+
+        radioGroup.setSelectedItem(null);
+        guaranty.clear();
+        //initial values
+        oldValue=null;
         value=new PaymentType();
+        Layout layout=new VerticalLayout(radioGroup, guaranty, label);
+        layout.setSizeUndefined();
 
         return layout;
     }
