@@ -28,6 +28,8 @@ import java.util.Set;
 @UIScope
 public class HotelView extends VerticalLayout implements View {
     public static final String NAME="HotelView";
+    //Field_ID=================
+    public static final String B_ADD_HOTEL="B_ADD_HOTEL";
 
     //service
     public final HotelService hotelService;
@@ -104,6 +106,7 @@ public class HotelView extends VerticalLayout implements View {
 
         clearNameFilterButton.setDescription("Clear name filter");
         clearNameFilterButton.addClickListener(e->clearNameFilterButtonClick());
+        createNewHotelButton.setId(B_ADD_HOTEL);
 
         HorizontalLayout nameFilterLayout=new HorizontalLayout(nameFilter, clearNameFilterButton);
         nameFilterLayout.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);

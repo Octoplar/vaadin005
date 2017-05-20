@@ -11,7 +11,7 @@ import vaadin.back.entity.HotelCategory;
 import vaadin.back.entity.PaymentType;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
-import vaadin.front.components.PaymentTypeField2;
+import vaadin.front.components.PaymentTypeField;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
 import vaadin.front.view.HotelView;
@@ -25,6 +25,17 @@ import static vaadin.util.HotelUtils.validationErrorsListToString;
  * Created by Octoplar on 03.05.2017.
  */
 public class HotelForm extends FormLayout {
+    //Field_ID=================
+    public static final String F_NAME="F_NAME";
+    public static final String F_ADDRESS="F_ADDRESS";
+    public static final String F_RATING="F_RATING";
+    public static final String CB_CATEGORY="CB_CATEGORY";
+    public static final String CAL_OPERATES_FROM ="CAL_OPERATES_FROM";
+    public static final String F_URL="F_URL";
+    public static final String B_SAVE="B_SAVE";
+    public static final String B_DELETE="B_DELETE";
+    public static final String F_DESCRIPTION="F_DESCRIPTION";
+
 
     //services
     private HotelService hotelService;
@@ -41,7 +52,7 @@ public class HotelForm extends FormLayout {
     private Button delete = new Button("Delete");
 
     private TextArea description = new TextArea("Description");
-    private PaymentTypeField2 paymentTypeField=new PaymentTypeField2("Payment type");
+    private PaymentTypeField paymentTypeField=new PaymentTypeField("Payment type");
 
     //entity to display
     private Hotel hotel;
@@ -90,6 +101,18 @@ public class HotelForm extends FormLayout {
         url.setDescription("Any string up to 255");
         description.setDescription("Any string up to 65535");
         paymentTypeField.setDescription("Select payment type");
+
+        //id binding
+        name.setId(F_NAME);
+        address.setId(F_ADDRESS);
+        rating.setId(F_RATING);
+        category.setId(CB_CATEGORY);
+        operatesFrom.setId(CAL_OPERATES_FROM);
+        url.setId(F_URL);
+        description.setId(F_DESCRIPTION);
+        save.setId(B_SAVE);
+        delete.setId(B_DELETE);
+
     }
 
     public Hotel getHotel() {
@@ -144,13 +167,19 @@ public class HotelForm extends FormLayout {
     }
 
     private void save(){
-        //validate
+        //validate hotel
         BinderValidationStatus<Hotel> validationStatus = hotelBinder.validate();
-
         if (validationStatus.hasErrors()) {
             Notification.show(validationErrorsListToString(validationStatus.getValidationErrors()));
             return;
         }
+        //validate custom field too
+        BinderValidationStatus<PaymentType> paymentTypeStatus=paymentTypeField.getValidationStatus();
+        if (paymentTypeStatus.hasErrors()) {
+            Notification.show(validationErrorsListToString(paymentTypeStatus.getValidationErrors()));
+            return;
+        }
+
         //save
         try{
 

@@ -9,6 +9,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  * Created by Octoplar on 19.05.2017.
  */
 public class SeleniumTest {
+    public static final String url="http://localhost:8080";
 
     public static void main(String[] args) {
         // Create a new instance of the html unit driver
@@ -33,4 +34,12 @@ public class SeleniumTest {
 
         driver.quit();
     }
+
+    //private===========================================================================================================
+
+
+
+
+
+
 }
