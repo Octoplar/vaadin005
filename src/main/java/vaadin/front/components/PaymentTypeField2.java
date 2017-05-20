@@ -75,19 +75,27 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
     }
 
     @Override
-    protected void doSetValue(PaymentType value) {
+    protected void doSetValue(PaymentType paymentType) {
+        PaymentType tmp;
         //null bean/properties protection============
-        if (value==null)
-            value=new PaymentType(false, false, (byte) 0);
-        if (value.isCard()==null)
-            value.setCard(false);
-        if (value.isCash()==null)
-            value.setCash(false);
-        if (value.getDeposit()==null)
-            value.setDeposit((byte) 0);
+        if (paymentType==null)
+            tmp=new PaymentType(false, false, (byte) 0);
+        else {
+            try {
+                tmp=paymentType.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (tmp.isCard()==null)
+            tmp.setCard(false);
+        if (tmp.isCash()==null)
+            tmp.setCash(false);
+        if (tmp.getDeposit()==null)
+            tmp.setDeposit((byte) 0);
         //============================================
 
-        this.value = value;
+        this.value = tmp;
         binder.setBean(this.value);
         updateView();
     }
@@ -100,6 +108,7 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
             throw new RuntimeException(e);
         }
     }
+
     public PaymentType getOldValue() {
         try {
             return oldValue.clone();
