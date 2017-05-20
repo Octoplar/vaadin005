@@ -11,7 +11,7 @@ import vaadin.back.entity.HotelCategory;
 import vaadin.back.entity.PaymentType;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
-import vaadin.front.components.PaymentTypeField;
+import vaadin.front.components.PaymentTypeField2;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
 import vaadin.front.validator.*;
 import vaadin.front.view.HotelView;
@@ -41,7 +41,7 @@ public class HotelForm extends FormLayout {
     private Button delete = new Button("Delete");
 
     private TextArea description = new TextArea("Description");
-    private PaymentTypeField paymentTypeField=new PaymentTypeField("Payment type");
+    private PaymentTypeField2 paymentTypeField=new PaymentTypeField2("Payment type");
 
     //entity to display
     private Hotel hotel;
@@ -79,7 +79,8 @@ public class HotelForm extends FormLayout {
         //=====================listeners=============================================
         save.addClickListener(e->save());
         delete.addClickListener(e->delete());
-        paymentTypeField.addValueChangeListener(e->paymentTypeOnValueChange());
+        //todo
+        //paymentTypeField.addValueChangeListener(e->paymentTypeOnValueChange());
 
         //tooltips
         name.setDescription("Any string up to 255");
@@ -144,6 +145,12 @@ public class HotelForm extends FormLayout {
     }
 
     private void save(){
+        //=========================================
+        //TODO
+        //binder not works: hotel.setPaymentType() method is not used by binder
+        //hotel.setPaymentType() force call
+        hotel.setPaymentType(paymentTypeField.getValue());
+        //=========================================
         //validate
         BinderValidationStatus<Hotel> validationStatus = hotelBinder.validate();
 
@@ -153,10 +160,6 @@ public class HotelForm extends FormLayout {
         }
         //save
         try{
-            //TODO
-            //binder not works: hotel.setPaymentType() method is not used by binder
-            //hotel.setPaymentType() force call
-            hotel.setPaymentType(paymentTypeField.getValue());
 
             hotelService.save(hotel);
         }
@@ -212,6 +215,9 @@ public class HotelForm extends FormLayout {
     }
 
     private void paymentTypeOnValueChange(){
+        if (paymentTypeField.getValue()==null||paymentTypeField.getOldValue()==null)
+            return;
+
         StringBuilder sb=new StringBuilder();
         PaymentType pt=paymentTypeField.getValue();
 

@@ -11,9 +11,9 @@ import vaadin.front.converter.StringToByteConverter;
 import java.util.Optional;
 
 /**
- * Created by Octoplar on 19.05.2017.
+ * Created by Octoplar on 20.05.2017.
  */
-public class PaymentTypeField extends CustomField<PaymentType>{
+public class PaymentTypeField2 extends CustomField<PaymentType> {
     private static final String CASH="Cash";
     private static final String CARD="Card";
 
@@ -30,96 +30,53 @@ public class PaymentTypeField extends CustomField<PaymentType>{
     private PaymentType oldValue;
     private PaymentType value;
 
-
-
-    public PaymentTypeField(String caption) {
+    public PaymentTypeField2(String caption) {
         this.caption = caption;
 
         //component config
         radioGroup=new RadioButtonGroup<>("Payment type");
         radioGroup.setItems(CARD, CASH);
         radioGroup.setStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
-        radioGroup.addValueChangeListener(e->radioOnValueChange());
-        radioGroup.addContextClickListener(e->radioOnValueChange());
+
 
         guaranty=new TextField();
         guaranty.setPlaceholder("Guaranty Deposit");
         guaranty.setValueChangeMode(ValueChangeMode.LAZY);
-        guaranty.addValueChangeListener(e->depositOnValueChange());
 
-        label=new Label("Payment will be made directly in hotel");
+        label=new Label("Payment directly in hotel");
         layout=new VerticalLayout(radioGroup, guaranty, label);
         layout.setSizeUndefined();
 
         //binder
         binder=new Binder<>();
         binder.forField(guaranty)
-                .asRequired("Value is required")
                 .withConverter(new StringToByteConverter())
                 .withValidator(i->(i>=0&&i<=100), "Value must be between 0 and 100")
                 .bind(PaymentType::getDeposit, PaymentType::setDeposit);
 
-        value=new PaymentType(false, false, (byte) 0);
-        oldValue=new PaymentType(false, false, (byte) 0);
+        binder.forField(radioGroup).bind(paymentType -> radioButtonProviderGetter(paymentType)
+                , (paymentType, s) ->radioButtonProviderSetter(paymentType, s)  );
     }
 
     @Override
     protected Component initContent() {
         super.setCaption(caption);
-
-        updateView();
+        //listeners
+        radioGroup.addValueChangeListener(e->radioOnValueChange());
+        guaranty.addValueChangeListener(e->depositOnValueChange());
+        //initial value
+        value=new PaymentType();
 
         return layout;
-
     }
-
 
     @Override
     protected void doSetValue(PaymentType paymentType) {
-        //handle null case and clone object
-        if (paymentType==null)
-            value=new PaymentType(false, false, (byte) 0);
-        else{
-            try {
-                this.value=paymentType.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        //null replacement
-        if (value.isCard()==null)
-            value.setCard(false);
-        if (value.isCash()==null)
-            value.setCash(false);
-        if (value.getDeposit()==null)
+        this.value = paymentType;
+        //null handling
+        if(value.getDeposit()==null)
             value.setDeposit((byte) 0);
-
-        //prevent double selection
-        if (value.isCard()&&value.isCash()){
-            value.setCard(false);
-            value.setCash(false);
-        }
-        //clear deposit in cash selection case
-        if (value.isCash())
-            value.setDeposit((byte) 0);
-
-        //copy current value to old value
-        try {
-            this.oldValue=value.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-
-        //binder
         binder.setBean(value);
-        //radioButton selection
-        radioGroup.clear();
-        if (value.isCash())
-            radioGroup.setSelectedItem(CASH);
-        if (value.isCard())
-            radioGroup.setSelectedItem(CARD);
-
         updateView();
     }
 
@@ -131,7 +88,6 @@ public class PaymentTypeField extends CustomField<PaymentType>{
             throw new RuntimeException(e);
         }
     }
-
     public PaymentType getOldValue() {
         try {
             return oldValue.clone();
@@ -140,60 +96,7 @@ public class PaymentTypeField extends CustomField<PaymentType>{
         }
     }
 
-
-    //inner fields validation result
-    public BinderValidationStatus<PaymentType> getValidationStatus(){
-        return binder.validate();
-    }
-
-
-    //privates==========================================================================================================
-
-    private void radioOnValueChange() {
-        //save old value
-        try {
-            oldValue=value.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-
-        //resolve selection
-        Optional<String> optional = radioGroup.getSelectedItem();
-        String item=optional.isPresent()?optional.get():null;
-        if (CARD.equals(item)){
-            value.setCard(true);
-            value.setCash(false);
-        }
-
-        if (CASH.equals(item)){
-            value.setCash(true);
-            value.setCard(false);
-        }
-        updateView();
-    }
-
-    private void depositOnValueChange(){
-        //validate
-        BinderValidationStatus<PaymentType> validationStatus = binder.validate();
-
-        if (validationStatus.hasErrors()) {
-            //do nothing
-            //changes in value field not saved
-            return;
-        }
-        else{
-            //save old value
-            try {
-                oldValue=value.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-            //update new value
-            //todo
-            //value.setDeposit(Byte.parseByte(guaranty.getValue()));
-        }
-    }
-
+    //private========================================================================================================
     private void updateView(){
         //reset visibility
         guaranty.setVisible(false);
@@ -208,5 +111,85 @@ public class PaymentTypeField extends CustomField<PaymentType>{
             label.setVisible(true);
         }
     }
-}
 
+    private void radioOnValueChange() {
+        //save old value, prepare new value
+        PaymentType newValue;
+        try {
+            oldValue=value.clone();
+            newValue=value.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //resolve selection
+        Optional<String> optional = radioGroup.getSelectedItem();
+        String item=optional.isPresent()?optional.get():null;
+        if (CARD.equals(item)){
+            newValue.setCard(true);
+            newValue.setCash(false);
+        }
+
+        if (CASH.equals(item)){
+            newValue.setCash(true);
+            newValue.setCard(false);
+            newValue.setDeposit(null);
+        }
+        //replace current value
+        setValue(newValue);
+    }
+
+    private void depositOnValueChange(){
+        //validate
+        BinderValidationStatus<PaymentType> validationStatus = binder.validate();
+
+        if (validationStatus.hasErrors()) {
+            //do nothing
+            //changes in value field not saved
+            return;
+        }
+        else{
+            //save old value, prepare new value
+            PaymentType newValue;
+            try {
+                oldValue=value.clone();
+                newValue=value.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+            newValue.setDeposit(Byte.parseByte(guaranty.getValue()));
+            setValue(newValue);
+        }
+    }
+
+    private String radioButtonProviderGetter(PaymentType p){
+        //multi or none selection
+        if (p.isCash() == p.isCard())
+            return null;
+        if (p.isCard())
+            return CARD;
+        else
+            return CASH;
+    }
+    private void radioButtonProviderSetter(PaymentType p, String s){
+        if (s==null){
+            p.setCash(false);
+            p.setCard(false);
+            //todo
+            //Caused by: java.lang.NullPointerException: value cannot be null
+            p.setDeposit((byte) 0);
+            return;
+        }
+
+        if (CARD.equals(s)){
+            p.setCard(true);
+            return;
+        }
+        if (CASH.equals(s)){
+            p.setCash(true);
+            return;
+        }
+
+    }
+}
