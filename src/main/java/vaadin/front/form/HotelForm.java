@@ -79,8 +79,7 @@ public class HotelForm extends FormLayout {
         //=====================listeners=============================================
         save.addClickListener(e->save());
         delete.addClickListener(e->delete());
-        //todo
-        //paymentTypeField.addValueChangeListener(e->paymentTypeOnValueChange());
+        paymentTypeField.addValueChangeListener(e->paymentTypeOnValueChange());
 
         //tooltips
         name.setDescription("Any string up to 255");

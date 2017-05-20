@@ -71,12 +71,20 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
     }
 
     @Override
-    protected void doSetValue(PaymentType paymentType) {
-        this.value = paymentType;
-        //null handling
-        if(value.getDeposit()==null)
+    protected void doSetValue(PaymentType value) {
+        //null bean/properties protection============
+        if (value==null)
+            value=new PaymentType(false, false, (byte) 0);
+        if (value.isCard()==null)
+            value.setCard(false);
+        if (value.isCash()==null)
+            value.setCash(false);
+        if (value.getDeposit()==null)
             value.setDeposit((byte) 0);
-        binder.setBean(value);
+        //============================================
+
+        this.value = value;
+        binder.setBean(this.value);
         updateView();
     }
 
@@ -134,7 +142,6 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
         if (CASH.equals(item)){
             newValue.setCash(true);
             newValue.setCard(false);
-            newValue.setDeposit(null);
         }
         //replace current value
         setValue(newValue);
@@ -165,7 +172,7 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
 
     private String radioButtonProviderGetter(PaymentType p){
         //multi or none selection
-        if (p.isCash() == p.isCard())
+        if (p.isCash().equals(p.isCard()))
             return null;
         if (p.isCard())
             return CARD;
@@ -176,9 +183,6 @@ public class PaymentTypeField2 extends CustomField<PaymentType> {
         if (s==null){
             p.setCash(false);
             p.setCard(false);
-            //todo
-            //Caused by: java.lang.NullPointerException: value cannot be null
-            p.setDeposit((byte) 0);
             return;
         }
 
