@@ -129,12 +129,10 @@ public class Hotel extends AbstractEntity {
 	}
 
 	public PaymentType getPaymentType() {
-		System.out.println("HOTEL>>>>>>>>>>>>GET______PaymentType()");
 		return paymentType;
 	}
 
 	public void setPaymentType(PaymentType paymentType) {
-		System.out.println("HOTEL>>>>>>>>>>>>SET_____PaymentType()");
 		this.paymentType = paymentType;
 	}
 

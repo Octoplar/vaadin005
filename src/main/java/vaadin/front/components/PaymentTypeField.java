@@ -40,6 +40,7 @@ public class PaymentTypeField extends CustomField<PaymentType>{
         radioGroup.setItems(CARD, CASH);
         radioGroup.setStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
         radioGroup.addValueChangeListener(e->radioOnValueChange());
+        radioGroup.addContextClickListener(e->radioOnValueChange());
 
         guaranty=new TextField();
         guaranty.setPlaceholder("Guaranty Deposit");
@@ -48,6 +49,7 @@ public class PaymentTypeField extends CustomField<PaymentType>{
 
         label=new Label("Payment will be made directly in hotel");
         layout=new VerticalLayout(radioGroup, guaranty, label);
+        layout.setSizeUndefined();
 
         //binder
         binder=new Binder<>();
@@ -74,7 +76,6 @@ public class PaymentTypeField extends CustomField<PaymentType>{
 
     @Override
     protected void doSetValue(PaymentType paymentType) {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>INPUUUUT"+paymentType);
         //handle null case and clone object
         if (paymentType==null)
             value=new PaymentType(false, false, (byte) 0);
@@ -124,7 +125,6 @@ public class PaymentTypeField extends CustomField<PaymentType>{
 
     @Override
     public PaymentType getValue() {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>RETUUUURN"+value);
         try {
             return value.clone();
         } catch (CloneNotSupportedException e) {
@@ -141,10 +141,15 @@ public class PaymentTypeField extends CustomField<PaymentType>{
     }
 
 
+    //inner fields validation result
+    public BinderValidationStatus<PaymentType> getValidationStatus(){
+        return binder.validate();
+    }
+
+
     //privates==========================================================================================================
 
     private void radioOnValueChange() {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>radioOnValueChange() ");
         //save old value
         try {
             oldValue=value.clone();
@@ -155,7 +160,6 @@ public class PaymentTypeField extends CustomField<PaymentType>{
         //resolve selection
         Optional<String> optional = radioGroup.getSelectedItem();
         String item=optional.isPresent()?optional.get():null;
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>item"+item);
         if (CARD.equals(item)){
             value.setCard(true);
             value.setCash(false);
@@ -165,7 +169,6 @@ public class PaymentTypeField extends CustomField<PaymentType>{
             value.setCash(true);
             value.setCard(false);
         }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>NEW<<<<<<"+value);
         updateView();
     }
 
@@ -187,13 +190,12 @@ public class PaymentTypeField extends CustomField<PaymentType>{
             }
             //update new value
             value.setDeposit(Byte.parseByte(guaranty.getValue()));
-            //view update not required here
         }
         updateView();
     }
 
     private void updateView(){
-        //reset selection and visibility
+        //reset visibility
         guaranty.setVisible(false);
         label.setVisible(false);
 
@@ -206,74 +208,5 @@ public class PaymentTypeField extends CustomField<PaymentType>{
             label.setVisible(true);
         }
     }
-
-
-
-
-
-
 }
 
-
-//@SuppressWarnings("serial")
-//public class FreeServiceField extends CustomField<FreeServices> {
-//
-//    CheckBox breakfast = new CheckBox();
-//    CheckBox towels = new CheckBox();
-//    CheckBox spirits = new CheckBox();
-//
-//    private FreeServices value;
-//    private String caption = "Free";
-//
-//    public FreeServiceField(String caption) {
-//        super();
-//        this.caption = caption;
-//    }
-//
-//    @Override
-//    public FreeServices getValue() {
-//        return value;
-//    }
-//
-//    @Override
-//    protected Component initContent() {
-//        HorizontalLayout hor = new HorizontalLayout();
-//        super.setCaption(caption);
-//        breakfast.setIcon(VaadinIcons.SPOON);
-//        towels.setIcon(VaadinIcons.SQUARE_SHADOW);
-//        spirits.setIcon(VaadinIcons.TROPHY);
-//
-//        breakfast.setDescription("Breakfast");
-//        towels.setDescription("Towels");
-//        spirits.setDescription("Spirits");
-//
-//        breakfast.addValueChangeListener(l -> value.setBrekfast(l.getValue()));
-//        towels.addValueChangeListener(l -> value.setTowels(l.getValue()));
-//        spirits.addValueChangeListener(l -> value.setColdSpirits(l.getValue()));
-//
-//        hor.addComponent(breakfast);
-//        hor.addComponent(towels);
-//        hor.addComponent(spirits);
-//
-//        updateValues();
-//
-//        // value = new FreeServices();
-//        return hor;
-//    }
-//
-//    private void updateValues() {
-//        if (getValue() != null) {
-//            breakfast.setValue(value.isBrekfast());
-//            towels.setValue(value.isTowels());
-//            spirits.setValue(value.isColdSpirits());
-//        }
-//
-//    }
-//
-//    @Override
-//    protected void doSetValue(FreeServices value) {
-//        this.value = new FreeServices(value);
-//        updateValues();
-//    }
-//
-//}

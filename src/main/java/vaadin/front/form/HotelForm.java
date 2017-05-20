@@ -8,6 +8,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
+import vaadin.back.entity.PaymentType;
 import vaadin.back.service.HotelCategoryService;
 import vaadin.back.service.HotelService;
 import vaadin.front.components.PaymentTypeField;
@@ -78,6 +79,7 @@ public class HotelForm extends FormLayout {
         //=====================listeners=============================================
         save.addClickListener(e->save());
         delete.addClickListener(e->delete());
+        paymentTypeField.addValueChangeListener(e->paymentTypeOnValueChange());
 
         //tooltips
         name.setDescription("Any string up to 255");
@@ -152,8 +154,10 @@ public class HotelForm extends FormLayout {
         //save
         try{
             //TODO
-            //binder not work???
-            //hotel.setPaymentType(paymentTypeField.getValue());
+            //binder not works: hotel.setPaymentType() method is not used by binder
+            //hotel.setPaymentType() force call
+            hotel.setPaymentType(paymentTypeField.getValue());
+
             hotelService.save(hotel);
         }
         catch (OptimisticLockException e){
@@ -207,6 +211,37 @@ public class HotelForm extends FormLayout {
                 .bind(Hotel::getPaymentType, Hotel::setPaymentType);
     }
 
+    private void paymentTypeOnValueChange(){
+        StringBuilder sb=new StringBuilder();
+        PaymentType pt=paymentTypeField.getValue();
 
+        sb.append("Previous Value is: ")
+                .append(paymentTypeNotificationString(paymentTypeField.getOldValue()))
+                .append("\r\n")
+                .append("New Value is: ")
+                .append(paymentTypeNotificationString(paymentTypeField.getValue()));
+
+        Notification.show(sb.toString());
+    }
+
+    private String paymentTypeNotificationString(PaymentType pt){
+        //bad format
+        if (pt.isCard()&&pt.isCash())
+            return "BAD FORMAT";
+        //card
+        if (pt.isCard()) {
+            StringBuilder sb=new StringBuilder();
+            sb.append("CARD, ")
+                    .append(pt.getDeposit())
+                    .append("% prepayment");
+            return sb.toString();
+        }
+        //cash
+        if (pt.isCash()) {
+            return "CASH";
+        }
+        //none
+        return "NOT SELECTED";
+    }
 
 }

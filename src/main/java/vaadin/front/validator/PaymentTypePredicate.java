@@ -18,6 +18,7 @@ public class PaymentTypePredicate  implements SerializablePredicate<PaymentType>
         if (paymentType.getDeposit()<0||paymentType.getDeposit()>100)
             return false;
         //only one payment type must be checked
-        return paymentType.isCard()^paymentType.isCash();
+        boolean result=paymentType.isCard()^paymentType.isCash();
+        return result;
     }
 }
