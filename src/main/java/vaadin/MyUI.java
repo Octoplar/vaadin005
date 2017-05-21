@@ -27,6 +27,7 @@ import javax.servlet.annotation.WebServlet;
 @SpringUI
 @Theme("mytheme")
 public class MyUI extends UI {
+    public static final String M_MENU="M_MENU";
 
     @WebListener
     public static class MyContextLoaderListener extends ContextLoaderListener {
@@ -97,14 +98,16 @@ public class MyUI extends UI {
 
     //======================privates====================================================================================
     private Component configureMenuBar(){
-            menuBar = new MenuBar();
+        menuBar = new MenuBar();
 
-            // create menu items
-            menuBar.addItem("Hotel", command -> navigator.navigateTo(HotelView.NAME));
-            menuBar.addItem("", null).setEnabled(false);
-            menuBar.addItem("Categories", command -> navigator.navigateTo(CategoryView.NAME));
+        // create menu items
+        menuBar.addItem("Hotel", command -> navigator.navigateTo(HotelView.NAME));
+        menuBar.addItem("", null).setEnabled(false);
+        menuBar.addItem("Categories", command -> navigator.navigateTo(CategoryView.NAME));
+        menuBar.setId(M_MENU);
 
-            return menuBar;
+
+        return menuBar;
 
     }
 

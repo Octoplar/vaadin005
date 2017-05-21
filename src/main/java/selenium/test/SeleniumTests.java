@@ -4,11 +4,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
@@ -123,45 +123,55 @@ public class SeleniumTests extends AbstractTest {
         urlField.sendKeys(hotel.getUrl());
         Thread.sleep(500);
 
-        //category
-        myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.CB_CATEGORY)));
-        WebElement selectField=driver.findElement(By.id(HotelForm.CB_CATEGORY));
-        Select select=new Select(selectField);
-        String categoryStr=hotel.getCategory().getName();
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+categoryStr);
-        select.selectByVisibleText(categoryStr);
-        Thread.sleep(500);
-
         //payment type
         PaymentType pt=hotel.getPaymentType();
         if (pt.isCard()){
             myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(PaymentTypeField.RBG_TYPE)));
             WebElement rbgField=driver.findElement(By.id(PaymentTypeField.RBG_TYPE));
-            WebElement cardLabel=rbgField.findElement(By.id("gwt-uid-77"));
-            WebElement label=rbgField.findElement(By.linkText("CARD"));
+            //find nested label
+            WebElement label=rbgField.findElement(By.xpath("//*[contains(text(), 'Card')]"));
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+"CARD");
-            cardLabel.click();
+            label.click();
             Thread.sleep(500);
 
 
             myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(PaymentTypeField.F_DEPOSIT)));
             WebElement depositField=driver.findElement(By.id(PaymentTypeField.F_DEPOSIT));
+            depositField.clear();
             depositField.sendKeys(pt.getDeposit().toString());
         }
         else{
             myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(PaymentTypeField.RBG_TYPE)));
             WebElement rbgField=driver.findElement(By.id(PaymentTypeField.RBG_TYPE));
-            WebElement cashLabel=rbgField.findElement(By.id("gwt-uid-78"));
+            //find nested label
+            WebElement label=rbgField.findElement(By.xpath("//*[contains(text(), 'Cash')]"));
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+"CASH");
-            cashLabel.click();
+            label.click();
         }
         Thread.sleep(500);
 
+        //category
+        myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.CB_CATEGORY)));
+        WebElement selectField=driver.findElement(By.id(HotelForm.CB_CATEGORY));
+        WebElement selectTextField=driver.findElement(By.xpath("//*[@class='v-filterselect-input']"));
+        selectTextField.sendKeys(hotel.getCategory().getName());
+        selectTextField.sendKeys(Keys.ENTER);
+
+//        WebElement showButton=driver.findElement(By.xpath("//*[@class='v-filterselect-button']"));
+//        showButton.click();
+//        Thread.sleep(500);
+//        WebElement category=selectField.findElement(By.xpath("//*[contains(text(), '"+hotel.getCategory().getName()+"')]"));
+//        category.click();
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getCategory().getName());
+
+        Thread.sleep(500);
 
         //operates
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.CAL_OPERATES_FROM)));
         WebElement operatesField=driver.findElement(By.id(HotelForm.CAL_OPERATES_FROM));
-        WebElement dateField=operatesField.findElement(By.className("v-textfield v-datefield-textfield"));
+        WebElement dateField=operatesField.findElement(By.xpath("//*[@class='v-textfield v-datefield-textfield']"));
+        //class="v-textfield v-datefield-textfield"
 
         dateField.clear();
         LocalDateToLongDaysConverter converter=new LocalDateToLongDaysConverter();

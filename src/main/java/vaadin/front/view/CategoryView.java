@@ -20,6 +20,12 @@ import java.util.Set;
 @org.springframework.stereotype.Component
 @UIScope
 public class CategoryView extends VerticalLayout implements View {
+    //Field_ID=================
+    public static final String B_ADD_CATEGORY="B_ADD_CATEGORY";
+    public static final String B_DELETE_SELECTED_CATEGORIES="B_DELETE_SELECTED_CATEGORIES";
+
+
+    //for navigator
     public static final String NAME="CategoryView";
 
     //service
@@ -78,9 +84,12 @@ public class CategoryView extends VerticalLayout implements View {
         //toolbar config
         createNewHotelCategoryButton.setCaption("Create new hotel category");
         createNewHotelCategoryButton.addClickListener(e->createNewHotelCategoryButtonClick());
+        createNewHotelCategoryButton.setId(B_ADD_CATEGORY);
+
         deleteSelectedHotelCategoryButton.setCaption("Delete selected");
         deleteSelectedHotelCategoryButton.addClickListener(e-> deleteSelectedHotelCategoryButtonClick());
         deleteSelectedHotelCategoryButton.setVisible(false);
+        deleteSelectedHotelCategoryButton.setId(B_DELETE_SELECTED_CATEGORIES);
 
 
         //layouts===========

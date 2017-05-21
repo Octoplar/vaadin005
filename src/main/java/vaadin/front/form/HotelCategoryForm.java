@@ -17,6 +17,10 @@ import static vaadin.util.HotelUtils.validationErrorsListToString;
  * Created by Octoplar on 07.05.2017.
  */
 public class HotelCategoryForm extends FormLayout {
+    //Field_ID=================
+    public static final String F_CATEGORY_NAME="F_CATEGORY_NAME";
+    public static final String B_CATEGORY_SAVE="B_CATEGORY_SAVE";
+    public static final String B_CATEGORY_DELETE="B_CATEGORY_DELETE";
     //service
     private HotelCategoryService hotelCategoryService;
 
@@ -44,6 +48,7 @@ public class HotelCategoryForm extends FormLayout {
         this.hotelCategoryService=hotelCategoryService;
 
         hotelCategoryField=new TextField("Hotel category");
+        hotelCategoryField.setId(F_CATEGORY_NAME);
         saveButton=new Button("Save");
         deleteButton=new Button("Delete");
         //components add
@@ -54,9 +59,12 @@ public class HotelCategoryForm extends FormLayout {
         saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
         saveButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         saveButton.addClickListener(e->saveButtonClick());
+        saveButton.setId(B_CATEGORY_SAVE);
+
         deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
         deleteButton.setClickShortcut(ShortcutAction.KeyCode.DELETE);
         deleteButton.addClickListener(e->deleteButtonClick());
+        deleteButton.setId(B_CATEGORY_DELETE);
 
 
 
