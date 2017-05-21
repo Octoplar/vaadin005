@@ -10,15 +10,20 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import vaadin.MyUI;
 import vaadin.back.entity.Hotel;
 import vaadin.back.entity.HotelCategory;
 import vaadin.back.entity.PaymentType;
 import vaadin.front.components.PaymentTypeField;
 import vaadin.front.converter.LocalDateToLongDaysConverter;
+import vaadin.front.form.HotelCategoryForm;
 import vaadin.front.form.HotelForm;
+import vaadin.front.view.CategoryView;
 import vaadin.front.view.HotelView;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -52,28 +57,43 @@ public class SeleniumTests extends AbstractTest {
 
         //Create explicit wait.
         myWait = new WebDriverWait(driver, 10);
-        //	public Hotel(String name, String address, Integer rating, Long operatesFrom,
-        // HotelCategory category, String url, String description, PaymentType paymentType)
 
-        Hotel testHotel=new Hotel("TEST_HOTEL_NAME",
-                "address1321",
-                3,
-                333L,
-                new HotelCategory("Hostel"),
-                "some_url",
-                "description here",
-                new PaymentType(false, true, (byte) 90));
-        addHotel(testHotel);
+        //===========================================DATA_GENERATION====================================================
+        Random rand=new Random();
+        //new category
+        HotelCategory newCategory=new HotelCategory("SELENIUM_NEW_CATEGORY_"+rand.nextInt());
+
+        //name address rating operatesFrom category url description paymentType
+        Hotel testHotel0=new Hotel("SELENIUM_TEST_HOTEL_NAME", "address1321", 3, 333L, new HotelCategory("Hostel"),
+                "some_url", "description here", new PaymentType(false, true, (byte) 90));
+        Hotel testHotel1=new Hotel("SELENIUM_TEST_HOTEL_NAME", "address1321", 3, 333L, newCategory, "some_url",
+                "description here", new PaymentType(false, true, (byte) 90));
+        Hotel testHotel2=new Hotel("SELENIUM_TEST_HOTEL_NAME", "address1321", 3, 333L, newCategory, "some_url",
+                "description here", new PaymentType(true, false, null));
+        //==============================================================================================================
+
+
+        Thread.sleep(5000);
+        //addHotel(testHotel);
+        goToCategories();
+        addCategory(newCategory);
+        goToHotels();
+        addHotel(testHotel0);
+        addHotel(testHotel1);
+        addHotel(testHotel2);
+
+        //no assertion
+
 
     }
 
 
 
 
-
+    //hotel view must be opened
     private void addHotel(Hotel hotel) throws InterruptedException {
+        Thread.sleep(1000);
         //open form by create_button click
-        Thread.sleep(5000);
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelView.B_ADD_HOTEL)));
         WebElement addBtn=driver.findElement(By.id(HotelView.B_ADD_HOTEL));
         addBtn.click();
@@ -81,23 +101,22 @@ public class SeleniumTests extends AbstractTest {
         //fill data
         fillHotelFields(hotel);
 
-        //save
+        //save by button
         WebElement saveBtn=driver.findElement(By.id(HotelForm.B_SAVE));
         saveBtn.click();
     }
 
+    //hotel form must be opened
     private void fillHotelFields(Hotel hotel) throws InterruptedException {
         //name
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.F_NAME)));
         WebElement nameField=driver.findElement(By.id(HotelForm.F_NAME));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getName());
         nameField.sendKeys(hotel.getName());
         Thread.sleep(500);
 
         //address
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.F_ADDRESS)));
         WebElement addressField=driver.findElement(By.id(HotelForm.F_ADDRESS));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getAddress());
         addressField.sendKeys(hotel.getAddress());
         Thread.sleep(500);
 
@@ -105,21 +124,18 @@ public class SeleniumTests extends AbstractTest {
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.F_RATING)));
         WebElement ratingField=driver.findElement(By.id(HotelForm.F_RATING));
         ratingField.clear();
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getRating().toString());
         ratingField.sendKeys(hotel.getRating().toString());
         Thread.sleep(500);
 
         //description
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.F_DESCRIPTION)));
         WebElement descriptionField=driver.findElement(By.id(HotelForm.F_DESCRIPTION));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getDescription());
         descriptionField.sendKeys(hotel.getDescription());
         Thread.sleep(500);
 
         //url
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.F_URL)));
         WebElement urlField=driver.findElement(By.id(HotelForm.F_URL));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getUrl());
         urlField.sendKeys(hotel.getUrl());
         Thread.sleep(500);
 
@@ -130,7 +146,6 @@ public class SeleniumTests extends AbstractTest {
             WebElement rbgField=driver.findElement(By.id(PaymentTypeField.RBG_TYPE));
             //find nested label
             WebElement label=rbgField.findElement(By.xpath("//*[contains(text(), 'Card')]"));
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+"CARD");
             label.click();
             Thread.sleep(500);
 
@@ -145,7 +160,6 @@ public class SeleniumTests extends AbstractTest {
             WebElement rbgField=driver.findElement(By.id(PaymentTypeField.RBG_TYPE));
             //find nested label
             WebElement label=rbgField.findElement(By.xpath("//*[contains(text(), 'Cash')]"));
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+"CASH");
             label.click();
         }
         Thread.sleep(500);
@@ -163,22 +177,58 @@ public class SeleniumTests extends AbstractTest {
 //        WebElement category=selectField.findElement(By.xpath("//*[contains(text(), '"+hotel.getCategory().getName()+"')]"));
 //        category.click();
 
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+hotel.getCategory().getName());
-
         Thread.sleep(500);
 
         //operates
         myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelForm.CAL_OPERATES_FROM)));
         WebElement operatesField=driver.findElement(By.id(HotelForm.CAL_OPERATES_FROM));
         WebElement dateField=operatesField.findElement(By.xpath("//*[@class='v-textfield v-datefield-textfield']"));
-        //class="v-textfield v-datefield-textfield"
 
         dateField.clear();
         LocalDateToLongDaysConverter converter=new LocalDateToLongDaysConverter();
         String date=converter.convertToPresentation(hotel.getOperatesFrom(), null).format(dtf);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>"+date);
         dateField.sendKeys(date);
         Thread.sleep(500);
 
+    }
+
+    //category view must be opened
+    private void addCategory(HotelCategory category) throws InterruptedException {
+        Thread.sleep(1000);
+        //open form by create_button click
+        myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(CategoryView.B_ADD_CATEGORY)));
+        WebElement addBtn=driver.findElement(By.id(CategoryView.B_ADD_CATEGORY));
+        addBtn.click();
+
+        //fill data
+        fillCategoryFields(category);
+
+        //save by button
+        WebElement saveBtn=driver.findElement(By.id(HotelCategoryForm.B_CATEGORY_SAVE));
+        saveBtn.click();
+    }
+
+    //category form must be opened
+    private void fillCategoryFields(HotelCategory category) throws InterruptedException {
+        //name
+        myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(HotelCategoryForm.F_CATEGORY_NAME)));
+        WebElement nameField=driver.findElement(By.id(HotelCategoryForm.F_CATEGORY_NAME));
+        nameField.sendKeys(category.getName());
+        Thread.sleep(500);
+    }
+
+    private void goToHotels(){
+        myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(MyUI.M_MENU)));
+        WebElement menu=driver.findElement(By.id(MyUI.M_MENU));
+        List<WebElement> hotelItem=driver.findElements(By.xpath("//*[@class='v-menubar-menuitem']"));
+        hotelItem.get(0).click();
+
+
+    }
+    private void goToCategories(){
+        myWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(MyUI.M_MENU)));
+        WebElement menu=driver.findElement(By.id(MyUI.M_MENU));
+        List<WebElement> hotelItem=driver.findElements(By.xpath("//*[@class='v-menubar-menuitem']"));
+        hotelItem.get(1).click();
     }
 }
